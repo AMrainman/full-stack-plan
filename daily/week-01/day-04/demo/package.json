@@ -1,0 +1,14 @@
+{
+  "name": "day-04-minimal-http-server",
+  "version": "1.0.0",
+  "description": "第 1 周第 4 天 demo：原生 http 模块最小服务",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx minimal-http-server.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.0"
+  }
+}
