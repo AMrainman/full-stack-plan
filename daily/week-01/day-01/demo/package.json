@@ -1,0 +1,13 @@
+{
+  "name": "day-01-demo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "start:promise": "node dist/promise-chain.js",
+    "start:async": "node dist/async-error-handling.js"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}
