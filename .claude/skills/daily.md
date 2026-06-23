@@ -11,7 +11,7 @@ description: 根据 full-stack-plan.md 生成第 w 周第 d 天的学习计划
 
 从用户输入中提取三个值：
 
-- `week`：整数，第几周（>=1）。
+- `week`：整数，第几周（1-52）。
 - `day`：整数，一周中的第几天（>=1）。不再强制 1-7，允许超过 7 天。
 - `hours`：可选整数，今日学习时长。
 
@@ -38,6 +38,7 @@ description: 根据 full-stack-plan.md 生成第 w 周第 d 天的学习计划
 - `output`：本周产出物。
 
 如果找不到对应 `week`，向用户说明并停止执行。
+如果 `week` 大于 52，向用户说明本计划只覆盖 52 周并停止执行。
 
 ## 3. 计算输出目录
 
@@ -58,6 +59,8 @@ daily/week-{ww}/day-{dd}/
 > - 覆盖：重新生成 6 个标准 markdown 文件和 `demo/` 目录。
 > - 查缺补漏（默认）：保留已有文件，并基于本周计划增加学习任务。
 > - 取消：不生成任何文件。
+
+如果 `AskUserQuestion` 工具不可用，默认使用「查缺补漏」模式。
 
 - 如果用户选择「取消」，停止执行。
 - 如果用户选择「查缺补漏」：
@@ -108,7 +111,7 @@ file: {filename}
 
 ### 5.3 生成 6 个 markdown 文件
 
-使用 `Write` 工具在目标目录创建以下文件：
+使用 `Write` 工具在目标目录创建以下文件。如果 `daily/week-{ww}/` 目录不存在，先创建 `daily/week-{ww}/README.md`，包含本周概览（stage、theme、coreTasks、output）。
 
 - `README.md`：今日目标、与本周主题关系、时间块概览、关键产出、前置依赖。
 - `tasks.md`：按优先级排序的任务清单（使用 `- [ ]` checkbox）、建议时间段、验收标准。
@@ -138,9 +141,11 @@ file: {filename}
 
 ```bash
 git add daily/week-{ww}/day-{dd}/
-git commit -m "docs: add daily plan for week {week} day {day}"
+git commit -m "docs: add daily plan for week {week} day {day}" -- daily/week-{ww}/day-{dd}/
 git push
 ```
+
+如果 `git status` 命令失败（仓库未初始化 git），跳过 git 操作，仅向用户说明文件已生成本地目录。
 
 如果 `git status` 显示没有任何变更，跳过提交并向用户说明。
 
