@@ -141,11 +141,11 @@ file: {filename}
 ## 6. 自动 Git 提交
 
 1. 先运行 `git status`。如果命令失败（非 0 退出码），说明仓库未初始化 git，跳过 git 操作并提示用户文件已生成本地目录。
-2. 如果 `git status` 成功，但目标目录不在变更列表中（没有任何变更），跳过提交并提示用户。
+2. 如果 `git status` 成功，但目标目录或周 README 不在变更列表中（没有任何变更），跳过提交并提示用户。
 3. 否则执行：
    ```bash
-   git add daily/week-{ww}/day-{dd}/
-   git commit -m "docs: add daily plan for week {week} day {day}" -- daily/week-{ww}/day-{dd}/
+   git add daily/week-{ww}/
+   git commit -m "docs: add daily plan for week {week} day {day}" -- daily/week-{ww}/
    git push
    ```
 
