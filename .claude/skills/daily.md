@@ -15,6 +15,9 @@ description: 根据 full-stack-plan.md 生成第 w 周第 d 天的学习计划
 - `day`：整数，一周中的第几天（>=1）。不再强制 1-7，允许超过 7 天。
 - `hours`：可选整数，今日学习时长。
 
+如果 `week < 1` 或 `week > 52`，向用户说明 `week` 必须在 1-52 之间并停止执行。
+如果 `day < 1`，向用户说明 `day` 必须是正整数并停止执行。
+
 `hours` 默认值规则：
 - 如果 `day` 在 1-5 之间，默认 `2`。
 - 如果 `day` 在 6-7 之间，默认 `5`。
@@ -111,7 +114,7 @@ file: {filename}
 
 ### 5.3 生成 6 个 markdown 文件
 
-使用 `Write` 工具在目标目录创建以下文件。如果 `daily/week-{ww}/` 目录不存在，先创建 `daily/week-{ww}/README.md`，包含本周概览（stage、theme、coreTasks、output）。
+使用 `Write` 工具在目标目录创建以下文件。如果 `daily/week-{ww}/README.md` 不存在，先创建 `daily/week-{ww}/README.md`，包含本周概览（stage、theme、coreTasks、output）。
 
 - `README.md`：今日目标、与本周主题关系、时间块概览、关键产出、前置依赖。
 - `tasks.md`：按优先级排序的任务清单（使用 `- [ ]` checkbox）、建议时间段、验收标准。
@@ -137,17 +140,14 @@ file: {filename}
 
 ## 6. 自动 Git 提交
 
-生成完成后，执行：
-
-```bash
-git add daily/week-{ww}/day-{dd}/
-git commit -m "docs: add daily plan for week {week} day {day}" -- daily/week-{ww}/day-{dd}/
-git push
-```
-
-如果 `git status` 命令失败（仓库未初始化 git），跳过 git 操作，仅向用户说明文件已生成本地目录。
-
-如果 `git status` 显示没有任何变更，跳过提交并向用户说明。
+1. 先运行 `git status`。如果命令失败（非 0 退出码），说明仓库未初始化 git，跳过 git 操作并提示用户文件已生成本地目录。
+2. 如果 `git status` 成功，但目标目录不在变更列表中（没有任何变更），跳过提交并提示用户。
+3. 否则执行：
+   ```bash
+   git add daily/week-{ww}/day-{dd}/
+   git commit -m "docs: add daily plan for week {week} day {day}" -- daily/week-{ww}/day-{dd}/
+   git push
+   ```
 
 ## 7. 输出摘要
 
