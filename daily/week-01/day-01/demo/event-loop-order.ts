@@ -4,6 +4,7 @@ import fs from 'fs'
 // Node.js Event Loop 复杂示例
 // 目标：理解同步代码、nextTick、Promise 微任务、timers、poll、check 阶段的执行顺序
 // 运行方式：npx tsc && node dist/event-loop-order.js
+// Node.js v24 的 ESM 顶层作用域中 Promise 微任务优先于 nextTick。
 // ============================================================
 
 // CommonJS 中可以直接使用 __filename，这里用 readFile 读取当前文件自身，模拟一次 I/O 操作

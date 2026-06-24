@@ -71,7 +71,7 @@ tstry { } catch (e) {
 
 同步代码执行完后，会将微任务队列执行完，才会执行宏任务队列中的第一个任务。如果宏任务执行过程中产生了新的微任务，则会在下个宏任务执行前执行完微任务队列。
 
-## node 的 event loop 执行顺序
+### node 的 event loop 执行顺序
 
 ```text
 nextTick 队列      ← 优先级最高
@@ -82,3 +82,5 @@ microtask 队列     ← Promise、queueMicrotask（次之）
 先清空 nextTick 队列 → 再清空 microtask 队列 → 才进入下一阶段
 ```
 process.nextTick 是最优先的微任务，且process.nextTick中嵌套process.nextTick，会在当前 nextTick 队列清空后立即执行
+
+Node.js v24 的 ESM 顶层作用域中 Promise 微任务优先于 nextTick。CJS 顶层作用域中 nextTick 微任务优先于 Promise 微任务。
