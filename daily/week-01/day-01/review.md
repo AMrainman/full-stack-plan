@@ -1,11 +1,11 @@
 ---
 week: 1
 day: 1
-date: 2026-06-23
+date: 2026-06-24
 stage: 后端基础与数据库
 theme: TypeScript + Node.js 热身
 hours: 2
-tags: [TypeScript, Node.js, 环境配置, 异步基础]
+tags: [TypeScript, Node.js, 环境配置, 异步基础, Event Loop]
 file: review.md
 ---
 
@@ -19,17 +19,33 @@ file: review.md
 - [ ] Event Loop 执行顺序理解无误
 - [ ] 今日疑问已记录
 
+## 掌握度自评
+
+请在对应知识点后勾选当前状态：
+
+### Promise / async-await
+- [ ] 🟢 已掌握：能独立写出含错误处理的异步函数
+- [ ] 🟡 部分理解：需要对照示例才能写对
+- [ ] 🔴 不太懂：执行顺序经常预测错误
+
+### Event Loop
+- [ ] 🟢 已掌握：能独立预测同步/微任务/宏任务顺序
+- [ ] 🟡 部分理解：简单场景能判断，复杂嵌套会出错
+- [ ] 🔴 不太懂：概念还模糊
+
 ## 复盘问题
 
 1. 今天最大的收获是什么？
 2. 有没有卡住超过 20 分钟的知识点？是什么？
 3. 对本周「用原生 http 写最小 JSON 服务」的产出物有清晰画面了吗？
+4. Event Loop 的哪类场景最容易让你踩坑？
 
 ## 明日预习
 
 第 2 天将进入 Node.js 原生 `http` 模块的学习，提前了解：
 - `http.createServer()` 的基本用法
 - `req` 和 `res` 对象的关键属性
+- 如何用 `JSON.stringify()` 返回 JSON 响应
 
 ## 卡点记录区
 

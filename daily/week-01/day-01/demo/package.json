@@ -5,7 +5,8 @@
   "scripts": {
     "build": "tsc",
     "start:promise": "node dist/promise-chain.js",
-    "start:async": "node dist/async-error-handling.js"
+    "start:async": "node dist/async-error-handling.js",
+    "start:eventloop": "node dist/event-loop-order.js"
   },
   "devDependencies": {
     "typescript": "^5.4.0"

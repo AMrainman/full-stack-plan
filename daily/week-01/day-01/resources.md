@@ -1,11 +1,11 @@
 ---
 week: 1
 day: 1
-date: 2026-06-23
+date: 2026-06-24
 stage: 后端基础与数据库
 theme: TypeScript + Node.js 热身
 hours: 2
-tags: [TypeScript, Node.js, 环境配置, 异步基础]
+tags: [TypeScript, Node.js, 环境配置, 异步基础, Event Loop]
 file: resources.md
 ---
 
@@ -22,6 +22,7 @@ file: resources.md
 - [Promise 详解 - MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise)
 - [async/await 详解 - MDN](https://developer.mozilla.org/zh-CN/docs/Learn/JavaScript/Asynchronous/Async_await)
 - [Node.js Event Loop 可视化](https://www.youtube.com/watch?v=8aGhZQkoFbQ)（Philip Roberts，经典演讲）
+- [Event Loop 详解 - Node.js 官方文档](https://nodejs.org/en/learn/asynchronous-work/event-loop-timers-and-nexttick)
 
 ## 参考仓库
 
@@ -43,3 +44,4 @@ file: resources.md
    Promise.resolve().then(() => console.log('3'));
    console.log('4');
    ```
+3. 在 Event Loop 练习题基础上，加入 `process.nextTick()`，再次预测输出顺序。

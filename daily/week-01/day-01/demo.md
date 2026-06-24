@@ -1,11 +1,11 @@
 ---
 week: 1
 day: 1
-date: 2026-06-23
+date: 2026-06-24
 stage: 后端基础与数据库
 theme: TypeScript + Node.js 热身
 hours: 2
-tags: [TypeScript, Node.js, 环境配置, 异步基础]
+tags: [TypeScript, Node.js, 环境配置, 异步基础, Event Loop]
 file: demo.md
 ---
 
@@ -16,6 +16,7 @@ file: demo.md
 1. 基础 `tsconfig.json`
 2. 一个演示 Promise 链式调用的示例
 3. 一个演示 async/await 错误处理的示例
+4. 一个演示 Event Loop 执行顺序的示例
 
 ## `demo/` 文件说明
 
@@ -25,6 +26,7 @@ file: demo.md
 | `demo/tsconfig.json` | 严格模式配置 |
 | `demo/promise-chain.ts` | Promise 链式调用示例 |
 | `demo/async-error-handling.ts` | async/await 错误处理示例 |
+| `demo/event-loop-order.ts` | Event Loop 执行顺序示例 |
 
 ## 运行步骤
 
@@ -34,6 +36,7 @@ pnpm install
 npx tsc
 node dist/promise-chain.js
 node dist/async-error-handling.js
+node dist/event-loop-order.js
 ```
 
 ## 预期输出
@@ -51,3 +54,13 @@ node dist/async-error-handling.js
 请求失败: 网络错误
 清理资源...
 ```
+
+`event-loop-order.js`：
+```
+1
+4
+3
+2
+```
+
+> 如果输出顺序与你的预期不同，请回到 `knowledge.md` 复习 Event Loop 的「同步 → 微任务 → 宏任务」顺序。

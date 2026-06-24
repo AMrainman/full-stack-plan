@@ -1,11 +1,11 @@
 ---
 week: 1
 day: 1
-date: 2026-06-23
+date: 2026-06-24
 stage: 后端基础与数据库
 theme: TypeScript + Node.js 热身
 hours: 2
-tags: [TypeScript, Node.js, 环境配置, 异步基础]
+tags: [TypeScript, Node.js, 环境配置, 异步基础, Event Loop]
 file: knowledge.md
 ---
 
@@ -38,6 +38,15 @@ Node.js 的 Event Loop 分为多个阶段（timers、poll、check、close callba
 
 **常见误区：** 认为 `setTimeout(fn, 0)` 会「立即」执行。实际上它会被放入 timers 队列，至少要等当前同步代码和微任务全部执行完。
 
+**最小示例：**
+```js
+console.log('1');
+setTimeout(() => console.log('2'), 0);
+Promise.resolve().then(() => console.log('3'));
+console.log('4');
+// 输出顺序：1 → 4 → 3 → 2
+```
+
 ## 4. tsconfig.json 严格模式的意义
 
 `"strict": true` 开启一系列严格类型检查，包括：
@@ -46,3 +55,19 @@ Node.js 的 Event Loop 分为多个阶段（timers、poll、check、close callba
 - `strictFunctionTypes`：函数参数双向协变检查
 
 **为什么重要：** 严格模式在前端 Vue3 项目中可能带来初期不适应，但在后端 API 开发中，严格的入参和出参类型能大幅减少运行时错误。
+
+## 5. 本周产出物「最小 HTTP 服务」是什么？
+
+本周最终目标是使用 Node.js 原生 `http` 模块启动一个服务，对外暴露一个返回 JSON 的接口。例如：
+```ts
+import http from 'http';
+
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ message: 'Hello Podcast API' }));
+});
+
+server.listen(3000);
+```
+
+Day 1 不直接写这个服务，但要理解：HTTP 服务本质上就是「监听端口 → 解析请求 → 返回响应」的异步流程，Promise/Event Loop 是支撑这条链路的基础。
