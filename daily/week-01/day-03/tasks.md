@@ -1,39 +1,56 @@
 ---
 week: 1
 day: 3
-date: 2026-06-23
+date: 2026-06-24
 stage: 后端基础与数据库
 theme: TypeScript + Node.js 热身
 hours: 2
-tags: [nodejs, http, typescript, json]
+tags: [TypeScript, Node.js, Event Loop, macrotask, microtask]
 file: tasks.md
 ---
 
 # 今日任务清单
 
-## 知识学习
+## 理论学习：30-40min
 
-- [ ] **Task 1：理解 http 模块与请求生命周期（40min）**
-  - 阅读 Node.js `http` 模块文档，理解 `createServer`、回调参数 `req` / `res`。
-  - 理解 HTTP Method、URL、Header、Status Code 的作用。
-  - 验收标准：能口头解释「请求进来后，Node.js 如何调用回调函数」。
+- [ ] 阅读 Node.js 官方 Event Loop 文档，理解阶段划分
+  - 建议时间段：0:00-0:20
+  - 验收标准：能口头解释 timers、poll、check、close callbacks 四个核心阶段的作用
+  - AI 辅助提示：AI 可以帮你：用播客场景（如"用户点击播放按钮后，音频加载与进度更新如何排队"）解释 Event Loop 阶段，生成记忆口诀。
 
-- [ ] **Task 2：用 TypeScript 写最小 JSON 服务（40min）**
-  - 创建 `demo/minimal-http-server.ts`。
-  - 实现一个监听 3000 端口的服务，对 `/api/hello` 返回 JSON：`{ "message": "Hello from Node.js" }`。
-  - 对未知路径返回 404 JSON 错误。
-  - 验收标准：运行 `npx tsx demo/minimal-http-server.ts` 后，curl 能拿到正确 JSON。
+- [ ] 区分 macrotask（宏任务）与 microtask（微任务）
+  - 建议时间段：0:20-0:40
+  - 验收标准：能列举常见的 macrotask（`setTimeout`、`setImmediate`、I/O）和 microtask（`Promise.then`、`process.nextTick`），并解释执行优先级
+  - AI 辅助提示：AI 可以帮你：用播客场景解释 macrotask/microtask（如"新节目推送通知 vs 播放进度更新"），生成对比表格。
 
-- [ ] **Task 3：手动测试接口（30min）**
-  - 使用 curl 或 Postman 测试 `/api/hello` 和 `/unknown`。
-  - 验收标准：能正确返回 200 和 404。
+## 动手实践：40-60min
 
-## 复盘
+- [ ] 画出 Event Loop 执行顺序图
+  - 建议时间段：0:40-1:10
+  - 验收标准：手绘或电子图包含：同步代码、macrotask 队列、microtask 队列，以及它们之间的执行顺序箭头
+  - AI 辅助提示：AI 可以帮你：根据你画的图检查逻辑是否正确，补充遗漏的边缘情况（如 `process.nextTick` 在 Node.js 中的特殊优先级）。
 
-- [ ] **Task 4：填写 review.md（10min）**
-  - 记录今天最大的一个收获和一个疑问。
-  - 验收标准：`review.md` 不为空。
+- [ ] 编写 `demo/event-loop-order.ts` 验证理论
+  - 建议时间段：1:10-1:40
+  - 验收标准：代码包含 `setTimeout`、`Promise.then`、`process.nextTick`（Node.js 环境），运行后输出顺序与你的理论分析一致
+  - AI 辅助提示：AI 可以帮你：生成包含陷阱的执行顺序题，讲解为什么实际输出与直觉不同。
 
-## 时间提醒
+## 验证/测试：15-20min
 
-- 总时长约 2h，如果服务调试超时，先标记为「未完成」，明天继续。
+- [ ] 运行代码并对比理论预测与实际输出
+  - 建议时间段：1:40-1:55
+  - 验收标准：能独立解释 `demo/event-loop-order.ts` 的每一行输出顺序，说明它属于哪个阶段或队列
+  - AI 辅助提示：AI 可以帮你：如果输出与预测不符，逐行分析执行流程，定位理解偏差。
+
+## 复盘：10min
+
+- [ ] 整理今日疑问到 `review.md`
+  - 建议时间段：1:55-2:00
+  - 验收标准：`review.md` 中至少记录 1 个疑问和 1 个收获
+  - AI 辅助提示：AI 可以帮你：根据记录内容生成结构化复盘模板，提炼关键概念清单。
+
+---
+
+## 今日结束后项目状态
+
+拥有 `demo/event-loop-order.ts` 可运行示例，能独立解释 macrotask/microtask 输出顺序，手绘 Event Loop 执行流程图。

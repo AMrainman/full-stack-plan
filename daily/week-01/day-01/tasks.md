@@ -1,7 +1,7 @@
 ---
 week: 1
 day: 1
-date: 2026-06-23
+date: 2026-06-24
 stage: 后端基础与数据库
 theme: TypeScript + Node.js 热身
 hours: 2
@@ -11,33 +11,46 @@ file: tasks.md
 
 # 今日任务清单
 
-## 高优先级
+## 理论学习：30-40min
 
-- [ ] 初始化 Node.js 项目并安装 TypeScript 依赖
+- [ ] 安装 Node.js 并理解 npm / pnpm 包管理器
   - 建议时间段：0:00-0:20
-  - 验收标准：`npx tsc --version` 能正常输出版本号
+  - 验收标准：`node --version` 和 `pnpm --version` 能正常输出版本号
+  - AI 辅助提示：AI 可以帮你：生成最小 `tsconfig.json` 并解释每个字段的含义，对比 npm / yarn / pnpm 的差异。
 
-- [ ] 配置 `tsconfig.json`（严格模式）
+- [ ] 理解 TypeScript 编译流程与 `tsconfig.json` 核心字段
   - 建议时间段：0:20-0:40
-  - 验收标准：编译示例文件无报错，且能捕获 `any` 隐式类型
+  - 验收标准：能解释 `target`、`module`、`outDir`、`rootDir`、`strict` 的作用，并运行 `npx tsc --version` 输出版本号
+  - AI 辅助提示：AI 可以帮你：逐行解释 `tsconfig.json` 配置，推荐适合 Node.js 项目的 starter 配置。
+
+## 动手实践：40-60min
+
+- [ ] 初始化最小 TypeScript 工程并运行第一个 `.ts` 文件
+  - 建议时间段：0:40-1:20
+  - 验收标准：工程目录包含 `package.json`、`tsconfig.json`，`npx tsc` 编译无报错，且能生成 `.js` 文件；运行 `node dist/index.js` 或 `npx tsx src/index.ts` 能打印出预期输出
+  - AI 辅助提示：AI 可以帮你：生成最小工程骨架，排查 "Cannot find module" 等常见报错。
 
 - [ ] 复习 Promise 三种状态与链式调用
-  - 建议时间段：0:40-1:00
-  - 验收标准：能手写 `new Promise((resolve, reject) => ...)` 并解释执行顺序
+  - 建议时间段：1:20-1:40
+  - 验收标准：能手写 `new Promise((resolve, reject) => { ... })` 并解释执行顺序，能用 `.then().catch()` 处理成功与失败分支
+  - AI 辅助提示：AI 可以帮你：出 3 道 Promise 执行顺序题并逐行讲解，纠正常见误区。
+
+## 验证/测试：15-20min
 
 - [ ] 用 `async/await` 改写回调函数
-  - 建议时间段：1:00-1:20
-  - 验收标准：给出一个包含错误处理的 async 函数示例
+  - 建议时间段：1:40-1:55
+  - 验收标准：给出一个包含错误处理的 async 函数示例，能正确捕获异常并打印错误信息
+  - AI 辅助提示：AI 可以帮你：对比 `.then().catch()` 与 `async/await` 的写法差异，生成带边界条件的测试用例。
 
-- [ ] 画出 Event Loop 执行顺序图（macrotask vs microtask）
-  - 建议时间段：1:20-1:40
-  - 验收标准：能解释 `setTimeout(() => console.log(1), 0)` 与 `Promise.resolve(2).then(...)` 的打印顺序
+## 复盘：10min
 
 - [ ] 整理今日疑问到 `review.md`
-  - 建议时间段：1:40-2:00
+  - 建议时间段：1:55-2:00
   - 验收标准：`review.md` 中至少记录 1 个疑问和 1 个收获
+  - AI 辅助提示：AI 可以帮你：根据记录内容生成结构化复盘模板，提炼关键概念清单。
 
-## 低优先级（时间充裕时）
+---
 
-- [ ] 阅读 Node.js 官方文档「Introduction to Node.js」章节
-- [ ] 浏览本周后续天数的任务，提前了解学习路径
+## 今日结束后项目状态
+
+从零开始，没有前置代码。今日完成后，你将拥有一个可运行的最小 TypeScript 工程骨架，并理解 Promise 基础与 async/await 语法。
