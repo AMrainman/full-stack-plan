@@ -55,12 +55,26 @@ node dist/event-loop-order.js
 清理资源...
 ```
 
-`event-loop-order.js`：
+`event-loop-order.js`（输出顺序可能因运行时机略有不同，详见文件内注释）：
 ```
-1
-4
-3
-2
+1. 同步代码开始
+2. 同步代码结束
+3. nextTick 1
+4. nextTick 嵌套
+5. Promise.then 1
+6. Promise.then 嵌套
+7. setInterval（第一次触发）
+8. setTimeout 0ms（timers 阶段）
+9. setTimeout 里的 nextTick
+10. setTimeout 里的 Promise.then
+11. setImmediate（check 阶段）
+12. setImmediate 里的 nextTick
+13. setImmediate 里的 Promise.then
+14. setTimeout 里的 setImmediate
+15. fs.readFile 回调（poll 阶段）
+16. I/O 回调里的 nextTick
+17. I/O 回调里的 setImmediate
+18. I/O 回调里的 setTimeout
 ```
 
-> 如果输出顺序与你的预期不同，请回到 `knowledge.md` 复习 Event Loop 的「同步 → 微任务 → 宏任务」顺序。
+> 如果输出顺序与你的预期不同，请回到 `knowledge.md` 复习 Event Loop 的「同步 → nextTick → Promise → timers/poll/check」顺序。

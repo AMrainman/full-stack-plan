@@ -2,6 +2,7 @@
   "name": "day-01-demo",
   "version": "1.0.0",
   "private": true,
+  "type": "commonjs",
   "scripts": {
     "build": "tsc",
     "start:promise": "node dist/promise-chain.js",
@@ -9,6 +10,7 @@
     "start:eventloop": "node dist/event-loop-order.js"
   },
   "devDependencies": {
+    "@types/node": "^26.0.0",
     "typescript": "^5.4.0"
   }
 }

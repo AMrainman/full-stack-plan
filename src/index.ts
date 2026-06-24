@@ -3,10 +3,11 @@ import fs from 'fs'
 // ============================================================
 // Node.js Event Loop 复杂示例
 // 目标：理解同步代码、nextTick、Promise 微任务、timers、poll、check 阶段的执行顺序
-// 运行方式：npx tsc && node dist/event-loop-order.js
+// 运行方式：npx tsc && node dist/index.js
 // ============================================================
 
-// CommonJS 中可以直接使用 __filename，这里用 readFile 读取当前文件自身，模拟一次 I/O 操作
+// ESM 中没有 __filename，用 new URL(import.meta.url) 获取当前文件 URL
+// fs.readFile 支持传入 URL 对象
 const intervalId = setInterval(() => {
   console.log('7. setInterval（第一次触发）')
   clearInterval(intervalId)
@@ -49,7 +50,7 @@ Promise.resolve().then(() => {
 })
 
 // I/O 回调在 poll 阶段执行；这里用 readFile 读取当前文件自身，模拟一次 I/O 操作
-fs.readFile(__filename, () => {
+fs.readFile(new URL(import.meta.url), () => {
   console.log('15. fs.readFile 回调（poll 阶段）')
 
   // 在 I/O 回调里：setImmediate 会先于 setTimeout(0) 执行
