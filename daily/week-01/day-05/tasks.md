@@ -5,7 +5,7 @@ date: 2026-06-24
 stage: 后端基础与数据库
 theme: TypeScript + Node.js 热身
 hours: 2
-tags: [TypeScript, Node.js, HTTP, 路由, 错误处理]
+tags: [TypeScript, Node.js, HTTP, JSON, 持久化]
 file: tasks.md
 ---
 
@@ -13,34 +13,38 @@ file: tasks.md
 
 ## 理论学习：30-40min
 
-- [ ] 理解 HTTP 错误处理分类与状态码语义
+- [ ] 理解请求体解析流程
   - 建议时间段：0:00-0:20
-  - 验收标准：能解释 400（Bad Request）、404（Not Found）、500（Internal Server Error）的适用场景，并说明为什么需要统一错误响应格式
-  - AI 辅助提示：AI 可以帮你：用播客场景举例（如"用户请求不存在的单集" vs "服务器数据库连接失败"），生成常见状态码速查表。
+  - 验收标准：能解释为什么 `req` 是流，需要监听 `data` 和 `end` 事件才能拿到完整请求体；能说明 `Content-Type: application/json` 的作用
+  - AI 辅助提示：AI 可以帮你：用「快递拆包裹」类比解释流式读取，生成一个最小请求体解析函数。
 
-- [ ] 学习异步路由中的错误捕获策略
+- [ ] 理解 URL 查询参数与 JSON 文件持久化
   - 建议时间段：0:20-0:40
-  - 验收标准：能解释为什么 `async` 路由中的 `throw` 不会自动被 `http` 模块捕获，需要手动 `try/catch` 或统一错误处理中间件
-  - AI 辅助提示：AI 可以帮你：对比"每个路由手动 try/catch"与"统一错误处理函数"两种方案，分析可维护性差异。
+  - 验收标准：能用 `new URL(req.url, 'http://localhost')` 提取 `searchParams`；能解释 `fs.readFileSync` / `writeFileSync` 在开发环境的使用场景与风险
+  - AI 辅助提示：AI 可以帮你：生成查询参数解析示例，对比同步/异步文件读写对 HTTP 服务吞吐的影响。
 
 ## 动手实践：40-60min
 
-- [ ] 为 HTTP 服务添加统一的 JSON 响应封装
-  - 建议时间段：0:40-1:10
-  - 验收标准：所有路由返回统一格式 `{ "success": true, "data": ... }` 或 `{ "success": false, "error": "..." }`，封装函数可复用
-  - AI 辅助提示：AI 可以帮你：生成响应封装函数模板，审查类型定义是否严谨（如 TypeScript 泛型约束）。
+- [ ] 扩展 HTTP 服务，支持 POST /api/podcasts
+  - 建议时间段：0:40-1:20
+  - 验收标准：创建 `demo/podcast-server.ts`，在 day-04 服务基础上新增 `POST /api/podcasts`；能解析 JSON 请求体，把新播客加入内存数组，并返回 201 + 创建后的对象
+  - AI 辅助提示：AI 可以帮你：生成路由分发骨架，学习者填充 POST 处理逻辑；排查 `JSON.parse` 失败、请求体为空等常见问题。
 
-- [ ] 实现 404 / 500 统一处理与异步路由安全
-  - 建议时间段：1:10-1:40
-  - 验收标准：未匹配路由返回 404 JSON；路由处理函数中 `throw` 错误时服务不崩溃，返回 500 JSON；异步路由使用 `try/catch` 或等效机制
-  - AI 辅助提示：AI 可以帮你：审查错误处理是否遗漏（如未捕获的 Promise 拒绝、JSON 解析错误），建议日志记录方案。
+- [ ] 支持 `GET /api/podcasts?category=tech` 查询参数过滤，并把数据持久化到 JSON 文件
+  - 建议时间段：1:20-1:40
+  - 验收标准：`GET /api/podcasts?category=tech` 只返回 `category=tech` 的播客；服务启动时从 `demo/podcasts.json` 读取数据，写入时同步回文件；不存在的分类返回空数组 `[]`
+  - AI 辅助提示：AI 可以帮你：审查查询参数匹配逻辑，建议如何优雅处理文件读写异常，避免服务崩溃。
 
 ## 验证/测试：15-20min
 
-- [ ] 使用 curl 测试错误场景
+- [ ] 用 curl 测试新增接口
   - 建议时间段：1:40-1:55
-  - 验收标准：`curl` 未知路径返回 404 + 统一错误格式；手动在代码中 `throw new Error('DB fail')` 后重启服务，访问该路由返回 500 + 统一错误格式，且服务未崩溃
-  - AI 辅助提示：AI 可以帮你：生成覆盖正常路径与错误路径的测试 curl 脚本，分析异常响应与预期不符的根因。
+  - 验收标准：以下命令均返回预期结果：
+    - `curl http://localhost:3000/api/podcasts`
+    - `curl "http://localhost:3000/api/podcasts?category=tech"`
+    - `curl -X POST -H "Content-Type: application/json" -d '{"title":"新播客","category":"tech"}' http://localhost:3000/api/podcasts`
+    - `curl http://localhost:3000/unknown`
+  - AI 辅助提示：AI 可以帮你：生成完整 curl 命令集合，分析 400/500 错误原因。
 
 ## 复盘：10min
 
@@ -53,4 +57,4 @@ file: tasks.md
 
 ## 今日结束后项目状态
 
-拥有一个带统一 JSON 响应封装、404 / 500 错误处理、异步路由安全的稳定 HTTP 服务，能通过 curl 验证正常与异常路径。
+拥有一个可运行的播客 HTTP 服务（`demo/podcast-server.ts`），支持 GET 列表、查询参数过滤、POST 新增、404 处理、500 错误捕获，并把数据持久化到 `demo/podcasts.json`。
