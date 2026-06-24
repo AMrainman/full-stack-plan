@@ -25,6 +25,11 @@ file: tasks.md
 
 ## 动手实践：40-60min
 
+- [ ] 为 HTTP 服务添加统一的 JSON 响应封装
+  - 建议时间段：0:40-1:10
+  - 验收标准：所有路由返回统一格式 `{ "success": true, "data": ... }` 或 `{ "success": false, "error": "..." }`，封装函数可复用
+  - AI 辅助提示：AI 可以帮你：生成响应封装函数模板，审查类型定义是否严谨（如 TypeScript 泛型约束）。
+
 - [ ] 扩展 HTTP 服务，支持 POST /api/podcasts
   - 建议时间段：0:40-1:20
   - 验收标准：创建 `demo/podcast-server.ts`，在 day-04 服务基础上新增 `POST /api/podcasts`；能解析 JSON 请求体，把新播客加入内存数组，并返回 201 + 创建后的对象
