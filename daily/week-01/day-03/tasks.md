@@ -1,56 +1,54 @@
 ---
 week: 1
 day: 3
-date: 2026-06-24
+date: 2026-06-25
 stage: 后端基础与数据库
 theme: TypeScript + Node.js 热身
 hours: 2
-tags: [TypeScript, Node.js, Event Loop, macrotask, microtask]
+tags: [TypeScript, Node.js, http, middleware, async-await, error-handling]
 file: tasks.md
 ---
 
 # 今日任务清单
 
-## 理论学习：30-40min
+## 理论学习：30min
 
-- [ ] 阅读 Node.js 官方 Event Loop 文档，理解阶段划分
-  - 建议时间段：0:00-0:20
-  - 验收标准：能口头解释 timers、poll、check、close callbacks 四个核心阶段的作用
-  - AI 辅助提示：AI 可以帮你：用播客场景（如"用户点击播放按钮后，音频加载与进度更新如何排队"）解释 Event Loop 阶段，生成记忆口诀。
+- [ ] 理解中间件（middleware）概念与 `next()` 的作用
+  - 建议时间段：0:00-0:30
+  - 验收标准：能用自己的话解释「中间件就是一个处理函数，决定是把请求交给下一个函数，还是直接结束响应」；能说明 `next()` 不调用会怎样
+  - AI 辅助提示：AI 可以帮你：把「请求 → 日志中间件 → 请求体解析中间件 → 路由 → 错误处理」画成流程图，并对比 Express 的 `app.use()`。
+  - 今日结束后项目状态：脑子里有一张请求处理流水线图，知道每个中间件负责什么。
 
-- [ ] 区分 macrotask（宏任务）与 microtask（微任务）
-  - 建议时间段：0:20-0:40
-  - 验收标准：能列举常见的 macrotask（`setTimeout`、`setImmediate`、I/O）和 microtask（`Promise.then`、`process.nextTick`），并解释执行优先级
-  - AI 辅助提示：AI 可以帮你：用播客场景解释 macrotask/microtask（如"新节目推送通知 vs 播放进度更新"），生成对比表格。
+## 动手实践：60min
 
-## 动手实践：40-60min
+- [ ] 实现最简中间件执行器 `demo/middleware-runner.ts`
+  - 建议时间段：0:30-1:00
+  - 验收标准：能把多个 `(req, res, next) => void | Promise<void>` 函数串起来执行；某个中间件抛出异常或返回 rejected Promise 时，能交给后续错误处理；响应结束后不再调用后续中间件
+  - AI 辅助提示：AI 可以帮你：检查 `compose` 函数是否正确处理了同步异常、异步异常、重复调用 `next()` 三种情况。
+  - 今日结束后项目状态：项目里多了一个可复用的中间件执行器，为 Express 学习做铺垫。
 
-- [ ] 画出 Event Loop 执行顺序图
-  - 建议时间段：0:40-1:10
-  - 验收标准：手绘或电子图包含：同步代码、macrotask 队列、microtask 队列，以及它们之间的执行顺序箭头
-  - AI 辅助提示：AI 可以帮你：根据你画的图检查逻辑是否正确，补充遗漏的边缘情况（如 `process.nextTick` 在 Node.js 中的特殊优先级）。
+- [ ] 用中间件改造 HTTP 服务，补齐日志、请求体解析、错误处理
+  - 建议时间段：1:00-1:30
+  - 验收标准：`demo/minimal-http-server.ts` 使用 `compose([logger, bodyParser, router])` 启动；日志中间件打印 `METHOD URL STATUS DURATION`；请求体解析中间件对非法 JSON 返回 400；路由抛出异常时被集中捕获并返回 500 JSON
+  - AI 辅助提示：AI 可以帮你：解释为什么 `req.on('data')` 必须在中间件里完成，以及如何用 `res.on('finish')` 获取最终状态码。
+  - 今日结束后项目状态：服务从「所有逻辑塞在一个回调」升级为「分层中间件流水线」。
 
-- [ ] 编写 `demo/event-loop-order.ts` 验证理论
-  - 建议时间段：1:10-1:40
-  - 验收标准：代码包含 `setTimeout`、`Promise.then`、`process.nextTick`（Node.js 环境），运行后输出顺序与你的理论分析一致
-  - AI 辅助提示：AI 可以帮你：生成包含陷阱的执行顺序题，讲解为什么实际输出与直觉不同。
+## 编码验证：30min
 
-## 验证/测试：15-20min
+- [ ] 实现 `PUT /podcasts/:id` 与 `DELETE /podcasts/:id`
+  - 建议时间段：1:30-1:45
+  - 验收标准：`PUT /podcasts/1` 能更新标题和描述；`DELETE /podcasts/1` 能删除资源并返回被删除对象；id 不存在返回 404；缺少 `title` 时返回 400
+  - AI 辅助提示：AI 可以帮你：生成一组 curl 命令，覆盖正常更新、删除不存在资源、提交非法 JSON 三种场景。
+  - 今日结束后项目状态：播客资源具备完整内存版 CRUD，可独立运行演示。
 
-- [ ] 运行代码并对比理论预测与实际输出
-  - 建议时间段：1:40-1:55
-  - 验收标准：能独立解释 `demo/event-loop-order.ts` 的每一行输出顺序，说明它属于哪个阶段或队列
-  - AI 辅助提示：AI 可以帮你：如果输出与预测不符，逐行分析执行流程，定位理解偏差。
-
-## 复盘：10min
-
-- [ ] 整理今日疑问到 `review.md`
-  - 建议时间段：1:55-2:00
-  - 验收标准：`review.md` 中至少记录 1 个疑问和 1 个收获
-  - AI 辅助提示：AI 可以帮你：根据记录内容生成结构化复盘模板，提炼关键概念清单。
+- [ ] 用 curl 验证完整 CRUD 与边界情况
+  - 建议时间段：1:45-2:00
+  - 验收标准：依次验证 `GET /health`、`GET /podcasts`、`GET /podcasts/:id`、`POST /podcasts`、`PUT /podcasts/:id`、`DELETE /podcasts/:id`、非法 JSON、404 路径，结果与预期一致
+  - AI 辅助提示：AI 可以帮你：把 curl 输出整理成表格，对比状态码与响应体结构。
+  - 今日结束后项目状态：服务经过手动测试，能稳定处理正常请求与常见异常请求。
 
 ---
 
 ## 今日结束后项目状态
 
-拥有 `demo/event-loop-order.ts` 可运行示例，能独立解释 macrotask/microtask 输出顺序，手绘 Event Loop 执行流程图。
+在 day-02 的 HTTP 服务基础上，引入中间件流水线：日志、请求体解析、业务路由、集中错误处理。服务支持 `GET /health`、`GET /podcasts`、`GET /podcasts/:id`、`POST /podcasts`、`PUT /podcasts/:id`、`DELETE /podcasts/:id`，并对非法 JSON、资源不存在、必填字段缺失等边界情况返回统一 JSON 错误响应。这是本周产出「最小 HTTP 服务」的完整版。

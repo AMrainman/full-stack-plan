@@ -1,11 +1,11 @@
 ---
 week: 1
 day: 3
-date: 2026-06-23
+date: 2026-06-25
 stage: 后端基础与数据库
 theme: TypeScript + Node.js 热身
 hours: 2
-tags: [nodejs, http, typescript, json]
+tags: [TypeScript, Node.js, http, middleware, async-await, error-handling]
 file: demo.md
 ---
 
@@ -13,13 +13,14 @@ file: demo.md
 
 ## 目标
 
-写一个最小的 TypeScript HTTP 服务，支持返回 JSON 和处理 404。
+基于原生 `http` 模块实现一个中间件流水线，并补齐播客资源的完整 CRUD。
 
 ## 文件清单
 
 | 文件 | 说明 |
 |------|------|
-| `demo/minimal-http-server.ts` | 原生 `http` 模块实现的最小 JSON 服务 |
+| `demo/middleware-runner.ts` | 最简中间件执行器，演示 `compose` 原理 |
+| `demo/minimal-http-server.ts` | 使用中间件执行器的完整 CRUD 服务 |
 
 ## 运行步骤
 
@@ -30,36 +31,47 @@ npx tsx demo/minimal-http-server.ts
 服务启动后，在另一个终端测试：
 
 ```bash
-curl http://localhost:3000/api/hello
-```
+# 健康检查
+curl http://localhost:3000/health
 
-**预期输出：**
+# 列表
+curl http://localhost:3000/podcasts
 
-```json
-{ "message": "Hello from Node.js" }
-```
+# 详情
+curl http://localhost:3000/podcasts/1
 
-测试 404：
+# 创建
+curl -X POST http://localhost:3000/podcasts \
+  -H 'Content-Type: application/json' \
+  -d '{"title":"新播客","description":"测试描述"}'
 
-```bash
-curl http://localhost:3000/unknown
-```
+# 更新
+curl -X PUT http://localhost:3000/podcasts/1 \
+  -H 'Content-Type: application/json' \
+  -d '{"title":"前端下午茶（更新）","description":"Vue 与更多"}'
 
-**预期输出：**
+# 删除
+curl -X DELETE http://localhost:3000/podcasts/1
 
-```json
-{ "error": "Not Found" }
+# 非法 JSON
+curl -X POST http://localhost:3000/podcasts \
+  -H 'Content-Type: application/json' \
+  -d '{"title":'
+
+# 404
+curl http://localhost:3000/not-found
 ```
 
 ## 代码要点
 
-- 使用 `createServer` 创建服务器。
-- 根据 `req.method` 和 `req.url` 判断路由。
-- 显式设置 `Content-Type: application/json`。
-- 未知路径返回 404 并附带 JSON 错误信息。
+- `middleware-runner.ts` 把中间件串成流水线，并统一捕获同步/异步异常。
+- `logger` 中间件在响应 `finish` 时打印耗时，演示「事后统计」。
+- `bodyParser` 中间件只在需要解析的方法里读取 `req` 流。
+- `router` 中间件用正则匹配 `/podcasts/:id`，集中处理业务。
+- 非法 JSON、资源不存在、必填字段缺失都返回统一 JSON 错误体。
 
 ## 今日代码产出要求
 
-- `demo/minimal-http-server.ts` 能直接运行。
+- `demo/middleware-runner.ts` 与 `demo/minimal-http-server.ts` 可直接运行。
 - 代码注释用中文解释「为什么」这样写。
-- 测试通过后再继续下一天。
+- 用 curl 验证所有接口后再继续下一天。
