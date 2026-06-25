@@ -12,16 +12,16 @@ importers:
         specifier: ^26.0.0
         version: 26.0.0
       typescript:
-        specifier: ^6.0.0
-        version: 6.0.3
+        specifier: ^5.6.0
+        version: 5.6.2
 
 packages:
 
   '@types/node@26.0.0':
     resolution: {integrity: sha512-vf2YFi1iY9lHGwNJMs01biZFbKJkrZR1T6/MlzjhJLPdntOHLhTrDSnSVcdtvjihi4VQNlrFRIxLsDBlQpAipA==}
 
-  typescript@6.0.3:
-    resolution: {integrity: sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==}
+  typescript@5.6.2:
+    resolution: {integrity: sha512-NW8ByodCSNCwZeghjN3o+JX5OFH0Ojg6sadjEKY4huZ52TqbJTJnDo5+Tw98lSy63NZvi4n+ez5m2u5d4PkZyw==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -34,6 +34,6 @@ snapshots:
     dependencies:
       undici-types: 8.3.0
 
-  typescript@6.0.3: {}
+  typescript@5.6.2: {}
 
   undici-types@8.3.0: {}

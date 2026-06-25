@@ -63,6 +63,7 @@ file: review.md
 - [ ] 理解 TypeScript 编译流程与 `tsconfig.json` 核心字段（🟡 部分完成）
   - 掌握度：🟡 部分理解
   - 卡点：对 target / module / lib 的对应关系没完全理解
+  - [参考手册](https://claude.ai/chat/68309fc3-f382-469f-9cdf-d98a19d3e171)
 
 ### 今日最大收获
 

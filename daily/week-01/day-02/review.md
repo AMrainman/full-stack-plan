@@ -13,30 +13,30 @@ file: review.md
 
 ## 完成检查清单
 
-- [ ] `tsconfig.json` 核心字段（target / module / moduleResolution / types）能理解并口述。
-- [ ] 能解释 `http.createServer` 回调何时触发、`req` 和 `res` 分别代表什么。
-- [ ] `demo/minimal-http-server.ts` 可运行，且 curl 验证通过。
-- [ ] `GET /podcasts`、`GET /podcasts/:id`、`POST /podcasts` 均返回预期 JSON。
-- [ ] 404 和错误路径返回统一的 JSON 错误体。
-- [ ] 今日疑问已记录到「卡点记录区」。
+- [x] `tsconfig.json` 核心字段（target / module / moduleResolution / types）能理解并口述。
+- [x] 能解释 `http.createServer` 回调何时触发、`req` 和 `res` 分别代表什么。
+- [x] `demo/minimal-http-server.ts` 可运行，且 curl 验证通过。
+- [x] `GET /podcasts`、`GET /podcasts/:id`、`POST /podcasts` 均返回预期 JSON。
+- [x] 404 和错误路径返回统一的 JSON 错误体。
+- [x] 今日疑问已记录到「卡点记录区」。
 
 ## 掌握度自评
 
 请在对应知识点后勾选当前状态：
 
 ### Node.js 原生 http 模块
-- [ ] 🟢 已掌握：能独立手写最小 HTTP 服务与路由匹配
+- [x] 🟢 已掌握：能独立手写最小 HTTP 服务与路由匹配
 - [ ] 🟡 部分理解：能看懂代码，但自己写会卡壳
 - [ ] 🔴 不太懂：对 `req` / `res` / 请求体解析还很模糊
 
 ### tsconfig.json 字段
-- [ ] 🟢 已掌握：能根据项目需求调整配置
+- [x] 🟢 已掌握：能根据项目需求调整配置
 - [ ] 🟡 部分理解：知道常见字段，但对应关系还不牢固
 - [ ] 🔴 不太懂：看到报错不知道如何改配置
 
 ### JSON 请求体解析与错误处理
 - [ ] 🟢 已掌握：能稳定处理 Buffer 拼接、JSON.parse、异常捕获
-- [ ] 🟡 部分理解：能跑通示例，但边界情况容易漏
+- [x] 🟡 部分理解：能跑通示例，但边界情况容易漏
 - [ ] 🔴 不太懂：经常因为请求体解析导致崩溃
 
 ## 复盘问题
@@ -61,8 +61,18 @@ file: review.md
 - 问题 1：_________________________
 - 问题 2：_________________________
 
-## 今日实际复盘
+## 今日实际复盘（2026-06-25）
 
-- 完成率：__ / 6
-- 最大收获：
-- 主要卡点：
+- 完成率：7 / 7（100%）
+
+### 未完成任务
+
+无
+
+### 今日最大收获
+
+无
+
+### 后续疑问
+
+无
