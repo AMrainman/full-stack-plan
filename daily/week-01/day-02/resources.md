@@ -1,11 +1,11 @@
 ---
 week: 1
 day: 2
-date: 2026-06-23
+date: 2026-06-25
 stage: 后端基础与数据库
 theme: TypeScript + Node.js 热身
-hours: 2
-tags: [typescript, nodejs, promise, async-await, event-loop]
+hours: 3
+tags: [TypeScript, Node.js, http, JSON, RESTful]
 file: resources.md
 ---
 
@@ -13,25 +13,26 @@ file: resources.md
 
 ## 官方文档
 
-- [TypeScript 官方文档](https://www.typescriptlang.org/docs/)
-- [Node.js 官方文档](https://nodejs.org/en/docs/)
-- [Node.js Event Loop 官方指南](https://nodejs.org/en/learn/asynchronous-work/event-loop-timers-and-nexttick)
+- [Node.js http 模块官方文档](https://nodejs.org/api/http.html)
+- [Node.js 事件循环官方指南](https://nodejs.org/en/learn/asynchronous-work/event-loop-timers-and-nexttick)
+- [TypeScript tsconfig 参考](https://www.typescriptlang.org/tsconfig)
 
 ## 精选文章
 
-- [JavaScript Promise 迷你书](https://liubin.github.io/promises-book/)
-- [async function 到底是什么？](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/async_function)
-- [Event Loop 可视化讲解](https://www.jsv9000.app/)（英文，可交互）
+- [MDN HTTP 概述](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Overview)
+- [MDN HTTP 状态码](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Status)
+- [RESTful API 设计指南](https://restfulapi.net/)
 
 ## 视频
 
-- 搜索关键词：「Node.js Event Loop 可视化」「TypeScript 入门」
+- 搜索关键词：「Node.js 原生 http 模块」「手写 HTTP 服务器」「RESTful API 入门」
 
 ## 练习
 
-- LeetCode / 牛客网：找 1-2 道与「异步执行顺序」相关的面试题自测。
-- 手动改写一个回调地狱版本的函数为 async/await 版本。
+- 给 `minimal-http-server.ts` 增加 `PUT /podcasts/:id` 和 `DELETE /podcasts/:id`。
+- 用 `URL` 对象解析 `req.url`，支持查询参数（如 `?author=张三`）。
+- 给 `POST /podcasts` 增加必填字段校验，缺少字段时返回 400。
 
 ## 参考仓库
 
-- 后续项目本身：`full-stack-plan` 中 `daily/week-01/day-02/demo/`
+- 本项目：`full-stack-plan` 中 `daily/week-01/day-02/demo/`

@@ -1,11 +1,11 @@
 ---
 week: 1
 day: 2
-date: 2026-06-23
+date: 2026-06-25
 stage: 后端基础与数据库
 theme: TypeScript + Node.js 热身
-hours: 2
-tags: [typescript, nodejs, promise, async-await, event-loop]
+hours: 3
+tags: [TypeScript, Node.js, http, JSON, RESTful]
 file: review.md
 ---
 
@@ -13,24 +13,56 @@ file: review.md
 
 ## 完成检查清单
 
-- [ ] `tsconfig.json` 能理解关键字段含义。
-- [ ] 能独立写出 Promise 并处理成功 / 失败分支。
-- [ ] 能用 `async/await` 重写 `.then().catch()` 版本。
-- [ ] 能解释 `demo/event-loop-order.js` 的输出顺序。
-- [ ] 两个 demo 都能成功运行。
+- [ ] `tsconfig.json` 核心字段（target / module / moduleResolution / types）能理解并口述。
+- [ ] 能解释 `http.createServer` 回调何时触发、`req` 和 `res` 分别代表什么。
+- [ ] `demo/minimal-http-server.ts` 可运行，且 curl 验证通过。
+- [ ] `GET /podcasts`、`GET /podcasts/:id`、`POST /podcasts` 均返回预期 JSON。
+- [ ] 404 和错误路径返回统一的 JSON 错误体。
+- [ ] 今日疑问已记录到「卡点记录区」。
 
-## 今日最大收获
+## 掌握度自评
 
-（学习完成后填写，1-2 句话即可）
+请在对应知识点后勾选当前状态：
 
-## 今日疑问 / 卡点
+### Node.js 原生 http 模块
+- [ ] 🟢 已掌握：能独立手写最小 HTTP 服务与路由匹配
+- [ ] 🟡 部分理解：能看懂代码，但自己写会卡壳
+- [ ] 🔴 不太懂：对 `req` / `res` / 请求体解析还很模糊
 
-（记录不懂或想深入了解的地方，方便周末集中攻克）
+### tsconfig.json 字段
+- [ ] 🟢 已掌握：能根据项目需求调整配置
+- [ ] 🟡 部分理解：知道常见字段，但对应关系还不牢固
+- [ ] 🔴 不太懂：看到报错不知道如何改配置
+
+### JSON 请求体解析与错误处理
+- [ ] 🟢 已掌握：能稳定处理 Buffer 拼接、JSON.parse、异常捕获
+- [ ] 🟡 部分理解：能跑通示例，但边界情况容易漏
+- [ ] 🔴 不太懂：经常因为请求体解析导致崩溃
+
+## 复盘问题
+
+1. 今天最大的收获是什么？
+2. 写路由匹配时最容易忽略哪个细节？
+3. `POST /podcasts` 的请求体解析流程能用自己的话讲清楚吗？
+4. 如果服务抛异常，当前代码会不会让进程崩溃？为什么？
 
 ## 明日预习
 
-明天进入编码实践：用原生 Node.js `http` 模块写一个最小 JSON 服务。
+第 3 天将进入 Express 框架入门前的过渡：在原生 `http` 基础上抽象出简单的「中间件」概念，理解请求处理流水线。
 预习要点：
-- `http.createServer` 的基本用法。
-- 如何解析请求 URL 和 Method。
-- 如何返回 JSON 响应。
+- 什么是中间件（middleware）。
+- 如何用函数把「日志记录」「错误处理」从路由里抽离。
+- Express 与原生 `http` 的关系。
+
+## 卡点记录区
+
+> 记录今天没解决、需要后续回顾的问题。
+
+- 问题 1：_________________________
+- 问题 2：_________________________
+
+## 今日实际复盘
+
+- 完成率：__ / 6
+- 最大收获：
+- 主要卡点：

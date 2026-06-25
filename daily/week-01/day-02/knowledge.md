@@ -1,76 +1,131 @@
 ---
 week: 1
 day: 2
-date: 2026-06-23
+date: 2026-06-25
 stage: 后端基础与数据库
 theme: TypeScript + Node.js 热身
-hours: 2
-tags: [typescript, nodejs, promise, async-await, event-loop]
+hours: 3
+tags: [TypeScript, Node.js, http, JSON, RESTful]
 file: knowledge.md
 ---
 
 # 核心知识点
 
-## 1. TypeScript 在 Node.js 中的角色
+## 1. `tsconfig.json` 字段对应关系
 
-TypeScript 是 JavaScript 的超集，提供静态类型检查。它不会直接运行，而是先编译成 JS，再由 Node.js 执行。
+### 为什么 day-01 这里卡住了
 
-### 最小配置关注点
+`target`、`module`、`moduleResolution`、`lib`、`types` 这几个字段相互影响，单独看文档容易迷失。把它们放在一起理解：
 
-| 字段 | 作用 | 为什么重要 |
-|------|------|-----------|
-| `target` | 编译目标 JS 版本 | 决定生成的代码能否在当前 Node 版本运行 |
-| `module` | 模块系统 | Node 常用 `CommonJS`，现代项目可用 `ESNext` + `"type": "module"` |
-| `outDir` | 编译输出目录 | 避免 `.js` 和 `.ts` 混在一起，便于清理 |
-| `rootDir` | 源码根目录 | 保持编译后的目录结构与源码一致 |
-| `strict` | 开启严格模式 | 尽早暴露类型错误，减少运行时意外 |
+| 字段 | 作用 | 与 Node.js 的关系 |
+|------|------|------------------|
+| `target` | TypeScript 编译成哪一版 ECMAScript | Node.js 版本越高，可设越新；v20+ 可放心用 `ES2022` / `ESNext` |
+| `module` | 生成的模块系统 | `CommonJS` 对应 `require`；`ESNext` / `NodeNext` 对应 `import`，需配合 `package.json#type: "module"` |
+| `moduleResolution` | TS 如何解析 `import` 路径 | Node 项目通常用 `node` 或 `nodenext`，需与 `module` 一致 |
+| `lib` | 编译时可用的内置类型库 | 不写时 TS 会根据 `target` 自动引入；Node 项目通常无需手动写 |
+| `types` | 显式引入哪些全局类型 | `"node"` 让 `process`、`Buffer` 等 Node API 有类型提示 |
 
-### 为什么先学配置
+### 关键记忆点
 
-后续 NestJS、Prisma 等框架都基于 TypeScript。理解 `tsconfig.json` 能让你在遇到编译错误时快速定位是类型问题还是配置问题。
+- `module: "NodeNext"` + `moduleResolution: "NodeNext"` 是 Node.js 原生 ES Module 项目的推荐组合。
+- `target` 决定语法降级程度，`module` 决定模块封装方式，二者不要混为一谈。
+- `package.json` 里 `"type": "module"` 告诉 Node.js 用 ES Module，但 TS 编译还要靠 `module` 字段生成对应产物。
 
-## 2. Promise / async / await
+## 2. Node.js 原生 `http` 模块
 
-### Promise 解决什么问题
-
-回调地狱（Callback Hell）让异步代码难以阅读和维护。Promise 把异步结果包装成对象，通过 `.then()` 和 `.catch()` 链式处理。
-
-### async / await 是什么
-
-`async` 函数会自动把返回值包装成 Promise；`await` 会暂停当前 async 函数的执行，等待 Promise 解决。它让异步代码看起来像同步代码，但本质上仍是 Promise。
-
-### 错误处理两种方式
+### `http.createServer`
 
 ```ts
-// 方式一：.catch()
-fetchData().catch(err => console.error(err));
+import http from 'node:http';
 
-// 方式二：try / await
-try {
-  const data = await fetchData();
-} catch (err) {
-  console.error(err);
+const server = http.createServer((req, res) => {
+  // req: 请求对象，可读流
+  // res: 响应对象，可写流
+  res.end('hello');
+});
+
+server.listen(3000, () => console.log('Server running on http://localhost:3000'));
+```
+
+### `req` 的关键属性
+
+| 属性 | 含义 | 示例 |
+|------|------|------|
+| `req.method` | HTTP 方法 | `GET`、`POST`、`PUT`、`DELETE` |
+| `req.url` | 请求路径 + 查询字符串 | `/podcasts?id=1` |
+| `req.headers` | 请求头对象 | `{ 'content-type': 'application/json' }` |
+
+### `res` 的关键方法
+
+| 方法 | 作用 |
+|------|------|
+| `res.writeHead(statusCode, headers)` | 写入状态码和响应头 |
+| `res.statusCode = 404` | 单独设置状态码 |
+| `res.setHeader('Content-Type', 'application/json')` | 单独设置响应头 |
+| `res.end(data)` | 结束响应，可带数据 |
+
+## 3. 路由匹配与 RESTful 风格
+
+原生 `http` 没有路由系统，需要手写匹配逻辑：
+
+```ts
+if (req.method === 'GET' && req.url === '/podcasts') {
+  // 返回列表
+} else if (req.method === 'GET' && req.url?.startsWith('/podcasts/')) {
+  // 解析 id，返回详情
 }
 ```
 
-### 常见误区
+RESTful 风格的核心：用 URL 表示资源，用 HTTP 方法表示操作。
 
-- `await` 只能用在 `async` 函数内部（顶层 await 需要特定环境）。
-- `async` 函数内部抛出错误会返回一个 rejected Promise。
-- 在循环里 `await` 会串行执行；需要并行时用 `Promise.all`。
+| 方法 + 路径 | 含义 |
+|------------|------|
+| `GET /podcasts` | 查询播客列表 |
+| `GET /podcasts/:id` | 查询单个播客 |
+| `POST /podcasts` | 创建播客 |
+| `PUT /podcasts/:id` | 更新播客 |
+| `DELETE /podcasts/:id` | 删除播客 |
 
-## 3. Event Loop 宏观流程
+## 4. JSON 请求体解析
 
-Node.js 的 Event Loop 让单线程能够处理大量并发 I/O。宏观上记住以下几点即可：
+`req` 是一个可读流，需要手动拼接数据：
 
-1. **同步代码先执行**：所有同步任务进入调用栈，执行完毕。
-2. **宏任务（macrotask）排队**：`setTimeout`、`setInterval`、I/O 回调等进入对应队列。
-3. **微任务（microtask）优先执行**：`Promise.then()`、`process.nextTick` 等在当前阶段结束后尽快执行。
-4. **Node.js 分阶段**：timers → pending callbacks → idle/prepare → poll → check → close callbacks，每阶段之间会清空微任务。
+```ts
+const chunks: Buffer[] = [];
+req.on('data', (chunk) => chunks.push(chunk));
+req.on('end', () => {
+  const body = JSON.parse(Buffer.concat(chunks).toString());
+  // 处理 body
+});
+```
 
-### 为什么要理解 Event Loop
+### 常见错误
 
-后端服务大量依赖异步 I/O（数据库、文件、网络）。理解 Event Loop 能帮你：
-- 避免阻塞主线程的长耗时操作。
-- 理解为什么 `setTimeout(fn, 0)` 不会立即执行。
-- 排查「为什么我的异步代码顺序不对」这类问题。
+- 忘记处理 `req.on('error')`：客户端断开时可能触发。
+- 直接 `JSON.parse` 而不 `try/catch`：非法 JSON 会抛异常导致进程崩溃。
+- 没设置 `Content-Type: application/json`：客户端可能无法正确识别响应格式。
+
+## 5. 状态码与错误响应
+
+| 状态码 | 含义 | 使用场景 |
+|--------|------|----------|
+| 200 | OK | 成功响应 |
+| 201 | Created | 创建资源成功 |
+| 400 | Bad Request | 请求参数错误 |
+| 404 | Not Found | 资源不存在 |
+| 500 | Internal Server Error | 服务器内部错误 |
+
+建议养成习惯：即使是错误，也返回 JSON 格式的统一错误体，方便前端处理。
+
+```ts
+res.writeHead(404, { 'Content-Type': 'application/json' });
+res.end(JSON.stringify({ error: 'Not Found' }));
+```
+
+## 6. 为什么先学原生 http
+
+框架（Express / NestJS）底层仍然是 `http`。理解原生模块能让你：
+
+- 清楚「请求怎么进来、响应怎么出去」。
+- 排查框架里的高级问题（如流式响应、自定义 header）。
+- 不被框架的语法糖遮住对 HTTP 协议本身的理解。
