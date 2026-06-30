@@ -1,11 +1,11 @@
 ---
 week: 1
 day: 4
-date: 2026-06-23
+date: 2026-06-30
 stage: 后端基础与数据库
 theme: TypeScript + Node.js 热身
 hours: 2
-tags: [TypeScript, Node.js, HTTP, Event Loop]
+tags: [TypeScript, Node.js, http, router, middleware]
 file: resources.md
 ---
 
@@ -14,21 +14,22 @@ file: resources.md
 ## 官方文档
 
 - [Node.js http 模块文档](https://nodejs.org/api/http.html)
+- [Express 路由指南](https://expressjs.com/en/guide/routing.html)
 - [TypeScript 官方手册](https://www.typescriptlang.org/docs/handbook/intro.html)
-- [tsx 快速运行 TypeScript](https://github.com/privatenumber/tsx)
 
 ## 精选文章
 
-- [Node.js 事件循环详解（Node.js 官方）](https://nodejs.org/en/learn/asynchronous-work/event-loop-timers-and-nexttick)
-- [JavaScript 异步编程：Promise / async-await 前端派](https://developer.mozilla.org/zh-CN/docs/Learn/JavaScript/Asynchronous)
+- [从零实现 Express 系列（路由篇）](https://github.com/ruanyf/node-cookbook)
+- [JavaScript URL 对象与 URLSearchParams](https://developer.mozilla.org/zh-CN/docs/Web/API/URL)
+- [Express 源码解析：路由系统](https://segmentfault.com/a/1190000008244918)
 
 ## 参考仓库
 
-- [Node.js 官方示例](https://github.com/nodejs/examples)
-- [typescript-node-starter](https://github.com/microsoft/TypeScript-Node-Starter)（可作为后续项目模板）
+- [tiny-node-router](https://github.com/)
+- [koa-router 源码](https://github.com/koajs/router)（看它是如何用正则匹配路径参数的）
 
 ## 练习题
 
-1. 在不重启进程的前提下，如何让 `/api/podcasts` 返回的数据从 JSON 文件读取？
-2. 如果路由处理函数里抛出一个未捕获的错误，当前服务会怎么表现？为什么加了 `try/catch` 就安全了？
-3. `res.writeHead(200, { 'Content-Type': 'application/json' })` 和先 `res.statusCode = 200` 再 `res.setHeader()` 有什么区别？
+1. 如果不使用正则，只用 `String.prototype.split`，如何实现路径参数解析？边界情况有哪些？
+2. 为什么 `req.url` 包含查询参数时，`new URL(req.url, 'http://localhost')` 能正确解析？第二个参数的作用是什么？
+3. 路由表按「先注册先匹配」有什么潜在问题？Express 是如何优化的？

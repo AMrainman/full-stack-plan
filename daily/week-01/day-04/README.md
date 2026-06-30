@@ -1,42 +1,37 @@
 ---
 week: 1
 day: 4
-date: 2026-06-23
+date: 2026-06-30
 stage: 后端基础与数据库
 theme: TypeScript + Node.js 热身
 hours: 2
-tags: [TypeScript, Node.js, HTTP, Event Loop]
+tags: [TypeScript, Node.js, http, router, middleware]
 file: README.md
 ---
 
-# 第 1 周第 4 天：原生 HTTP 服务编码实践
+# 今日目标
 
-## 今日目标
-
-- 用 TypeScript + Node.js 原生 `http` 模块写一个可运行的 JSON 服务。
-- 在真实代码中体会 Promise / async-await / Event Loop 的协作方式。
-- 为下周 Express 框架学习打好「请求-响应生命周期」的感性认识。
+在 day-03 的中间件流水线基础上，**用原生 `http` 实现一个更接近 Express 的路由分发器**，理解「路由」与「中间件」的关系，为下周 Express 框架学习做铺垫。
 
 ## 与本周主题的关系
 
-第 1 周主题是「TypeScript + Node.js 热身」。前两天侧重概念理解，今天进入编码实践：把 TypeScript 类型、异步语法、Node.js 原生 HTTP 能力串起来，跑通一个最小服务。
+第 1 周的主题是「TypeScript + Node.js 热身」。day-01 到 day-03 完成了最小 HTTP 服务：从直接 `createServer` 回调，到中间件流水线，再到完整 CRUD。今天把「路由」这一层抽出来，让 URL + Method 的匹配逻辑不再散落在业务代码里，而是交给一个可注册、可匹配的路由表。
 
-## 时间块概览（2 小时）
+## 时间块概览
 
-| 时间 | 内容 | 产出 |
-|------|------|------|
-| 0:00-0:30 | 搭建 demo 工程，理解 `http` 模块 API | `package.json`、`tsconfig.json` |
-| 0:30-1:10 | 实现带路由和 JSON 响应的最小 HTTP 服务 | `minimal-http-server.ts` |
-| 1:10-1:40 | 加入 async 处理与错误兜底 | 可处理异步错误的稳定服务 |
-| 1:40-2:00 | 自测、记录卡点、更新 review | 本地验证通过 + review.md |
+| 时间段 | 时长 | 内容 |
+|--------|------|------|
+| 0:00-0:30 | 30min | 理论学习：路由分发器的设计思路 |
+| 0:30-1:15 | 45min | 动手实践：实现支持方法 + 路径匹配的路由分发器 |
+| 1:15-1:45 | 30min | 编码验证：用路由表重构昨天的播客 CRUD |
+| 1:45-2:00 | 15min | 测试与复盘：curl 验证 + 填写 review.md |
 
 ## 关键产出
 
-- `daily/week-01/day-04/demo/minimal-http-server.ts`
-- `daily/week-01/day-04/demo/package.json`
-- `daily/week-01/day-04/demo/tsconfig.json`
+- `demo/router.ts`：原生路由分发器核心。
+- `demo/minimal-http-server.ts`：基于路由分发器的播客 CRUD 服务。
 
 ## 前置依赖
 
-- 已安装 Node.js（建议 v18+）和 pnpm / npm。
-- 理解 `Promise` 与 `async/await` 基本写法。
+- 已完成 day-03 的中间件执行器与完整 CRUD。
+- 理解 `next()`、`req`、`res`、请求体解析、统一错误响应。

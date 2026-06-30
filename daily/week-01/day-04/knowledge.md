@@ -1,72 +1,81 @@
 ---
 week: 1
 day: 4
-date: 2026-06-23
+date: 2026-06-30
 stage: 后端基础与数据库
 theme: TypeScript + Node.js 热身
 hours: 2
-tags: [TypeScript, Node.js, HTTP, Event Loop]
+tags: [TypeScript, Node.js, http, router, middleware]
 file: knowledge.md
 ---
 
 # 核心知识点
 
-## 1. 为什么要先学原生 `http` 模块？
+## 1. 路由是什么？
 
-Express、NestJS 等框架底层都基于 Node.js 的 `http`/`https` 模块。先写原生服务能帮你理解：
-
-- 请求长什么样：`method`、`url`、`headers`。
-- 响应如何构造：`statusCode`、`setHeader`、`end`。
-- 路由其实只是一堆 `if/else` 或 `switch`。
-
-框架帮你封装了这些细节，但面试和线上排错时，底层知识决定你能挖多深。
-
-## 2. `req` 和 `res` 的生命周期
-
-```
-客户端发起请求
-    │
-    ▼
-http.createServer((req, res) => { ... })
-    │
-    ├── 读取 req.method / req.url / req.headers
-    │
-    ├── 业务逻辑（路由、参数校验、查询数据）
-    │
-    └── 调用 res.writeHead / res.setHeader / res.end 返回响应
-```
-
-关键点：`res.end()` 必须被调用，否则客户端会一直挂起等待响应。
-
-## 3. async/await 在 HTTP 服务里的位置
-
-Node.js 的 `http` 回调是同步调用的。即使你在回调里写 `await`，也要让回调本身是 `async` 函数，否则未捕获的 Promise 拒绝可能导致进程退出。
-
-常见误区：
+路由就是「根据请求的 Method 和 URL，找到对应的处理函数」。在 Express 里你写：
 
 ```ts
-// ❌ 错误：异步错误可能吞掉或导致崩溃
-server.on('request', (req, res) => {
-  const data = await fetchSomething(); // 语法上就报错，因为回调不是 async
-});
-
-// ✅ 正确：把回调声明为 async
-server.on('request', async (req, res) => {
-  const data = await fetchSomething();
-});
+app.get('/podcasts/:id', (req, res) => { ... });
 ```
 
-## 4. Event Loop 与本节的关系
+底层本质上是：
 
-HTTP 请求到达时，Node.js 把 I/O 事件交给 Event Loop 调度。你在回调里写的异步操作（读取文件、查询数据库）不会阻塞主线程，等结果就绪后再由 Event Loop 推回调用栈。
+```ts
+if (req.method === 'GET' && match('/podcasts/:id', req.url)) {
+  req.params = extractParams('/podcasts/:id', req.url);
+  handler(req, res);
+}
+```
 
-今天先建立直觉：
+框架把这段判断封装成了优雅 API，但核心逻辑永远离不开字符串匹配和参数提取。
 
-- `await` 后面的代码会被挂起，主线程继续处理其他请求。
-- `setTimeout` / `setImmediate` / Promise 回调的优先级不同，后续会专门练习。
+## 2. 路由与中间件的关系
 
-## 5. 为什么错误处理必须放在路由层？
+- **中间件**：对请求做通用处理，不挑 URL（日志、请求体解析、错误处理）。
+- **路由**：只处理特定 Method + Path 的请求，是带条件的中间件。
+- **关系**：路由可以看作「只命中特定路径的中间件」；中间件执行器 `compose` 加上条件匹配，就能变成路由分发器。
 
-未捕获的异常会让整个 Node.js 进程退出。对于 HTTP 服务来说，一个请求的异常不应该影响其他请求。因此要在每个路由里 `try/catch`，把异常转换为 500 响应。
+## 3. 路径参数 vs 查询参数
 
-下阶段学习 Express 时，你会看到 `express-async-errors` 或统一错误中间件，本质也是这个思路的封装。
+| 类型 | 示例 | 来源 | 用途 |
+|------|------|------|------|
+| 路径参数 | `/podcasts/1` | URL 路径段 | 标识唯一资源 |
+| 查询参数 | `/podcasts?category=tech` | URL `?` 后 | 过滤、排序、分页 |
+
+解析方法：
+
+```ts
+const url = new URL(req.url || '', 'http://localhost');
+const category = url.searchParams.get('category'); // tech
+```
+
+## 4. 路由表的数据结构
+
+一个简单但可扩展的路由表：
+
+```ts
+interface Route {
+  method: string;           // GET / POST / PUT / DELETE
+  path: string;             // /podcasts/:id
+  pattern: RegExp;          // /^\/podcasts\/([^\/]+)$/
+  paramNames: string[];     // ['id']
+  handler: RequestHandler;
+}
+```
+
+注册时把 `:id` 替换成正则捕获组，请求到达时按顺序匹配，命中后把捕获值填进 `req.params`。
+
+## 5. 常见误区
+
+- **误区 1**：认为路由匹配是从长到短或从精确到模糊。很多框架确实是这么排序的，但最小实现里先注册先匹配就够了。
+- **误区 2**：路径参数和查询参数混用。路径参数用于定位资源，查询参数用于修饰请求，不要反过来。
+- **误区 3**：忽略 Method。只匹配路径不匹配 Method 会导致 `POST /podcasts/1` 意外命中 `GET /podcasts/:id`。
+
+## 6. 为什么明天要学 Express？
+
+今天我们用原生代码「手工实现」了路由分发器，明天开始用 Express 时，你会清楚：
+
+- `app.get` 底层就是路由表匹配。
+- `req.params` / `req.query` 是框架帮你解析的。
+- 路由中间件化、子路由、错误处理，都是在这个基础上扩展的。

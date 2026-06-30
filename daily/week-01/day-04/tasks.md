@@ -1,56 +1,50 @@
 ---
 week: 1
 day: 4
-date: 2026-06-24
+date: 2026-06-30
 stage: 后端基础与数据库
 theme: TypeScript + Node.js 热身
 hours: 2
-tags: [TypeScript, Node.js, HTTP, 原生模块]
+tags: [TypeScript, Node.js, http, router, middleware]
 file: tasks.md
 ---
 
 # 今日任务清单
 
-## 理论学习：30-40min
+## 理论学习：30min
 
-- [ ] 阅读 Node.js `http` 模块文档，理解请求生命周期
-  - 建议时间段：0:00-0:20
-  - 验收标准：能口头解释 `createServer` 回调参数 `req` / `res` 的作用，以及 HTTP Method、URL、Header、Status Code 的含义
-  - AI 辅助提示：AI 可以帮你：用播客场景（如"用户请求播客列表时，数据如何从服务器流回客户端"）解释请求生命周期，生成核心概念速查表。
+- [ ] 理解路由分发器的设计思路
+  - 建议时间段：0:00-0:30
+  - 验收标准：能解释「路由表」是什么；能说明 `app.get('/podcasts/:id', handler)` 内部大致如何匹配 URL；能区分路径参数 `:id` 与查询参数 `?category=x`
+  - AI 辅助提示：AI 可以帮你：把 Express 路由匹配过程画成流程图，解释 `req.params` 和 `req.query` 的由来。
+  - 今日结束后项目状态：脑子里有一张「Method + Path → Handler」的映射图，知道路由本质上是带条件的中间件。
 
-- [ ] 理解原生 HTTP 模块的路由匹配原理
-  - 建议时间段：0:20-0:40
-  - 验收标准：能解释为什么原生 `http` 模块没有内置路由，需要手动解析 `req.url` 和 `req.method`
-  - AI 辅助提示：AI 可以帮你：对比原生 `http` 与 Express / NestJS 的路由差异，生成最小路由匹配伪代码。
+## 动手实践：45min
 
-## 动手实践：40-60min
+- [ ] 实现原生路由分发器 `demo/router.ts`
+  - 建议时间段：0:30-1:15
+  - 验收标准：`router.get('/podcasts/:id', handler)` 能把路径参数解析到 `req.params`；`router.get('/podcasts', handler)` 能处理 `?category=x` 并解析到 `req.query`；匹配失败时返回 404； handler 抛出异常时被集中捕获
+  - AI 辅助提示：AI 可以帮你：设计路由表的数据结构、把 `/podcasts/:id` 转成可匹配的正则、处理查询参数解析。
+  - 今日结束后项目状态：项目里多了一个可复用的原生路由分发器，接口风格接近 Express。
 
-- [ ] 用 TypeScript 写最小 HTTP 服务
-  - 建议时间段：0:40-1:20
-  - 验收标准：创建 `demo/minimal-http-server.ts`，使用 `http` 模块监听 3000 端口；实现 `/health` 返回 `{ "status": "ok" }`；实现 `/api/podcasts` 返回 JSON 数组（可先用硬编码数据）
-  - AI 辅助提示：AI 可以帮你：生成路由框架，学习者填写具体处理逻辑；排查端口占用、CORS 等常见问题。
+## 编码验证：30min
 
-- [ ] 为未知路径返回 404 JSON 错误
-  - 建议时间段：1:20-1:40
-  - 验收标准：访问未定义路由时返回 `{ "error": "Not Found" }` 和 404 状态码，Content-Type 为 `application/json`
-  - AI 辅助提示：AI 可以帮你：审查响应头设置是否正确，建议统一的 JSON 响应格式。
+- [ ] 用路由表重构播客 CRUD 服务 `demo/minimal-http-server.ts`
+  - 建议时间段：1:15-1:45
+  - 验收标准：`GET /health`、`GET /podcasts`、`GET /podcasts/:id`、`POST /podcasts`、`PUT /podcasts/:id`、`DELETE /podcasts/:id` 都通过路由表注册；业务 handler 不再处理 `req.method` 和 `req.url` 的分发逻辑；非法 JSON、资源不存在、404 路径仍返回统一 JSON 错误
+  - AI 辅助提示：AI 可以帮你：把 day-03 的 `minimal-http-server.ts` 里的路由判断迁移到新的 `router` 上，并检查是否有遗漏的边界情况。
+  - 今日结束后项目状态：服务从「中间件流水线 + 手动路由判断」升级为「中间件流水线 + 路由表分发」，代码结构更接近 Express。
 
-## 验证/测试：15-20min
+## 测试与复盘：15min
 
-- [ ] 使用 curl 手动测试接口
-  - 建议时间段：1:40-1:55
-  - 验收标准：`curl http://localhost:3000/health`、`curl http://localhost:3000/api/podcasts`、`curl http://localhost:3000/unknown` 分别返回 200 + JSON、200 + 数组、404 + 错误 JSON
-  - AI 辅助提示：AI 可以帮你：生成 curl 命令集合，分析返回结果与预期不符的原因（如端口未监听、路径拼写错误）。
-
-## 复盘：10min
-
-- [ ] 整理今日疑问到 `review.md`
-  - 建议时间段：1:55-2:00
-  - 验收标准：`review.md` 中至少记录 1 个疑问和 1 个收获
-  - AI 辅助提示：AI 可以帮你：根据记录内容生成结构化复盘模板，提炼关键概念清单。
+- [ ] 用 curl 验证路由分发与边界情况
+  - 建议时间段：1:45-2:00
+  - 验收标准：依次验证 `GET /health`、`GET /podcasts?category=tech`、`GET /podcasts/1`、`POST /podcasts`、`PUT /podcasts/1`、`DELETE /podcasts/1`、访问 `/podcasts/abc`、404 路径，结果与预期一致
+  - AI 辅助提示：AI 可以帮你：把 curl 输出整理成表格，检查路径参数和查询参数是否正确解析。
+  - 今日结束后项目状态：路由分发器经过手动测试，能稳定处理正常请求、路径参数、查询参数和常见异常请求。
 
 ---
 
 ## 今日结束后项目状态
 
-拥有一个可运行的最小原生 HTTP 服务（`demo/minimal-http-server.ts`），支持 `/health`、`/api/podcasts` 和 404 处理，能返回正确 JSON。
+在 day-03 的中间件流水线 + 完整 CRUD 基础上，引入原生路由分发器。服务支持通过 `router.get/post/put/delete` 注册路由，自动解析路径参数 `:id` 和查询参数 `?category=x`，业务 handler 只关心请求处理本身。这是本周产出「最小 HTTP 服务」的进一步结构化和 Express 化的版本。

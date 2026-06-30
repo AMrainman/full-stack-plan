@@ -17,6 +17,14 @@ file: knowledge.md
 
 - 可以修改 `req` / `res`。
 - 可以结束响应（不再调用 `next`）。
+  - res.json() — 发送 JSON
+  - res.send() — 发送任意内容
+  - res.end() — 发送空响应或原始数据
+  - res.redirect() — 重定向
+  - res.sendFile() — 发送文件
+  - res.render() — 渲染模板
+  - res.download() — 触发文件下载
+  - res.sendStatus() — 只发状态码（如 res.sendStatus(204)）
 - 可以调用 `next()` 把控制权交给下一个中间件。
 - 可以调用 `next(err)` 把错误交给错误处理中间件。
 
@@ -143,7 +151,7 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 
 ### 6.3 异步错误为什么容易漏
 
-Express 的中间件签名基于回调，对 `async` 函数没有原生支持：
+Express 的中间件签名基于回调，5.0以下对 `async` 函数没有原生支持：
 
 ```ts
 // ❌ 错误：Promise reject 后不会进入错误处理中间件
@@ -261,6 +269,8 @@ app.use(async (ctx, next) => {
 这是 Koa 相比 Express 在异步代码上最显著的优势：**不需要在每个路由里写 `try/catch` 或 `next(err)`**。
 
 ## 8. Express vs Koa 对比
+
+本质区别就一句话：Koa 的洋葱模型让错误可以沿 async 调用链自然冒泡，Express 的中间件链是割裂的，错误只能靠 next(err) 手动传递。
 
 | 对比维度 | Express | Koa |
 |----------|---------|-----|
