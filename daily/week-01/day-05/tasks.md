@@ -1,65 +1,50 @@
 ---
 week: 1
 day: 5
-date: 2026-06-24
+date: 2026-07-08
 stage: 后端基础与数据库
 theme: TypeScript + Node.js 热身
 hours: 2
-tags: [TypeScript, Node.js, HTTP, JSON, 持久化]
+tags: [TypeScript, Node.js, http, middleware, router, Express]
 file: tasks.md
 ---
 
 # 今日任务清单
 
-## 理论学习：30-40min
+## 理论学习：30min
 
-- [ ] 理解请求体解析流程
-  - 建议时间段：0:00-0:20
-  - 验收标准：能解释为什么 `req` 是流，需要监听 `data` 和 `end` 事件才能拿到完整请求体；能说明 `Content-Type: application/json` 的作用
-  - AI 辅助提示：AI 可以帮你：用「快递拆包裹」类比解释流式读取，生成一个最小请求体解析函数。
+- [ ] 理解 `app.use` 与 `app.get` 的注册顺序和执行顺序
+  - 建议时间段：0:00-0:30
+  - 验收标准：能解释「先注册的中间件先执行」；能解释路由也是特殊的中间件；能说明 `app.use('/api', handler)` 与 `app.get('/api', handler)` 的区别
+  - AI 辅助提示：AI 可以帮你：把 Express 的请求处理流程画成时间线图，标注每个中间件和路由的入栈、执行、出栈顺序。
+  - 今日结束后项目状态：脑子里有一张「注册顺序 ≠ 匹配顺序，执行顺序由注册顺序和 next() 共同决定」的图。
 
-- [ ] 理解 URL 查询参数与 JSON 文件持久化
-  - 建议时间段：0:20-0:40
-  - 验收标准：能用 `new URL(req.url, 'http://localhost')` 提取 `searchParams`；能解释 `fs.readFileSync` / `writeFileSync` 在开发环境的使用场景与风险
-  - AI 辅助提示：AI 可以帮你：生成查询参数解析示例，对比同步/异步文件读写对 HTTP 服务吞吐的影响。
+## 动手实践：45min
 
-## 动手实践：40-60min
+- [ ] 实现类 Express 的 `App` 对象 `demo/app.ts`
+  - 建议时间段：0:30-1:15
+  - 验收标准：`app.use(middleware)` 可注册普通中间件；`app.get/post/put/delete(path, handler)` 可注册路由；`app.use(errorHandler)` 可注册 4 参数错误处理中间件；`app.listen(port)` 能启动服务；`next()` 能把控制权交给下一个中间件；调用 `next(err)` 能跳到错误处理中间件
+  - AI 辅助提示：AI 可以帮你：设计 `App` 内部的数据结构，决定如何存放普通中间件、路由表、错误处理中间件；把 day-03 的 `compose` 和 day-04 的 `Router` 组合起来。
+  - 今日结束后项目状态：项目里多了一个可复用的 `App` 类，接口风格接近 Express，能同时管理中间件和路由。
 
-- [ ] 为 HTTP 服务添加统一的 JSON 响应封装
-  - 建议时间段：0:40-1:10
-  - 验收标准：所有路由返回统一格式 `{ "success": true, "data": ... }` 或 `{ "success": false, "error": "..." }`，封装函数可复用
-  - AI 辅助提示：AI 可以帮你：生成响应封装函数模板，审查类型定义是否严谨（如 TypeScript 泛型约束）。
+## 编码验证：30min
 
-- [ ] 扩展 HTTP 服务，支持 POST /api/podcasts
-  - 建议时间段：0:40-1:20
-  - 验收标准：创建 `demo/podcast-server.ts`，在 day-04 服务基础上新增 `POST /api/podcasts`；能解析 JSON 请求体，把新播客加入内存数组，并返回 201 + 创建后的对象
-  - AI 辅助提示：AI 可以帮你：生成路由分发骨架，学习者填充 POST 处理逻辑；排查 `JSON.parse` 失败、请求体为空等常见问题。
+- [ ] 用 `App` 重构播客 CRUD 服务 `demo/minimal-http-server.ts`
+  - 建议时间段：1:15-1:45
+  - 验收标准：服务通过 `const app = new App()` 创建；`app.use(logger)`、`app.use(bodyParser)`、`app.get('/health', ...)`、`app.use(notFound)`、`app.use(errorHandler)` 这种链式/顺序式注册；业务 handler 不再直接调用 `compose` 或 `new Router()`；handler 抛出的异常被 4 参数错误处理中间件捕获
+  - AI 辅助提示：AI 可以帮你：把 day-04 的 `minimal-http-server.ts` 里的 `compose([...])` 调用迁移到 `App` 上，并补上一个 `(err, req, res, next) => {}` 错误处理中间件。
+  - 今日结束后项目状态：服务从「手动组合 compose + Router」升级为「用 App 对象管理全生命周期」，代码结构几乎和 Express 一致。
 
-- [ ] 支持 `GET /api/podcasts?category=tech` 查询参数过滤，并把数据持久化到 JSON 文件
-  - 建议时间段：1:20-1:40
-  - 验收标准：`GET /api/podcasts?category=tech` 只返回 `category=tech` 的播客；服务启动时从 `demo/podcasts.json` 读取数据，写入时同步回文件；不存在的分类返回空数组 `[]`
-  - AI 辅助提示：AI 可以帮你：审查查询参数匹配逻辑，建议如何优雅处理文件读写异常，避免服务崩溃。
+## 测试与复盘：15min
 
-## 验证/测试：15-20min
-
-- [ ] 用 curl 测试新增接口
-  - 建议时间段：1:40-1:55
-  - 验收标准：以下命令均返回预期结果：
-    - `curl http://localhost:3000/api/podcasts`
-    - `curl "http://localhost:3000/api/podcasts?category=tech"`
-    - `curl -X POST -H "Content-Type: application/json" -d '{"title":"新播客","category":"tech"}' http://localhost:3000/api/podcasts`
-    - `curl http://localhost:3000/unknown`
-  - AI 辅助提示：AI 可以帮你：生成完整 curl 命令集合，分析 400/500 错误原因。
-
-## 复盘：10min
-
-- [ ] 整理今日疑问到 `review.md`
-  - 建议时间段：1:55-2:00
-  - 验收标准：`review.md` 中至少记录 1 个疑问和 1 个收获
-  - AI 辅助提示：AI 可以帮你：根据记录内容生成结构化复盘模板，提炼关键概念清单。
+- [ ] 用 curl 验证中间件、路由、错误处理的执行顺序
+  - 建议时间段：1:45-2:00
+  - 验收标准：依次验证 `GET /health`、带查询参数的 `GET /podcasts?category=tech`、路径参数 `GET /podcasts/1`、触发 404 的路径、触发 handler 异常的路径，观察日志中间件和错误处理中间件是否按预期工作
+  - AI 辅助提示：AI 可以帮你：整理 curl 命令和预期输出表格，检查中间件执行顺序是否符合注册顺序。
+  - 今日结束后项目状态：`App` 经过手动测试，能稳定处理中间件、路由、404 和异常，本周「最小 HTTP 服务」目标完成。
 
 ---
 
 ## 今日结束后项目状态
 
-拥有一个可运行的播客 HTTP 服务（`demo/podcast-server.ts`），支持 GET 列表、查询参数过滤、POST 新增、404 处理、500 错误捕获，并把数据持久化到 `demo/podcasts.json`。
+在 day-04 的路由分发器基础上，引入类 Express 的 `App` 对象。服务通过 `app.use` 注册中间件、通过 `app.get/post/put/delete` 注册路由、通过 4 参数 `app.use(errorHandler)` 统一捕获异常。这是本周产出「最小 HTTP 服务」的最终形态：接口接近 Express，但全部由原生 `http` 模块手写实现。

@@ -1,11 +1,11 @@
 ---
 week: 1
 day: 5
-date: 2026-06-24
+date: 2026-07-08
 stage: 后端基础与数据库
 theme: TypeScript + Node.js 热身
 hours: 2
-tags: [TypeScript, Node.js, HTTP, JSON, 持久化]
+tags: [TypeScript, Node.js, http, middleware, router, Express]
 file: resources.md
 ---
 
@@ -13,21 +13,23 @@ file: resources.md
 
 ## 官方文档
 
+- [Express 路由指南](https://expressjs.com/zh-cn/guide/routing.html)
+- [Express 中间件指南](https://expressjs.com/zh-cn/guide/using-middleware.html)
+- [Express 错误处理](https://expressjs.com/zh-cn/guide/error-handling.html)
 - [Node.js http 模块](https://nodejs.org/api/http.html)
-- [Node.js fs 模块](https://nodejs.org/api/fs.html)
-- [MDN - URL API](https://developer.mozilla.org/zh-CN/docs/Web/API/URL)
 
 ## 精选文章
 
-- [Node.js 流（Stream）基础](https://nodejs.org/api/stream.html)
-- [MDN - HTTP 请求方法](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Methods)
+- [Express 中间件执行机制详解](https://expressjs.com/zh-cn/guide/writing-middleware.html)
+- [从 0 实现 Express（英文）](https://github.com/ryanmcdermott/express-from-scratch) — 可作为手写 App 的参考思路
 
 ## 参考仓库
 
-- 暂无外部仓库，以当天 `demo/podcast-server.ts` 为准。
+- 暂无外部仓库，以当天 `demo/app.ts` 为准。
 
 ## 练习题
 
-1. 为 `POST /api/podcasts` 增加字段校验：要求 `title` 必填且长度 > 0，否则返回 400。
-2. 实现 `DELETE /api/podcasts/:id`，从 JSON 文件中删除指定 id 的播客。
-3. 把文件读写改为异步版本（`fs.promises.readFile` / `writeFile`），观察对并发请求的影响。
+1. 给 `app.use` 增加路径前缀支持：`app.use('/api', handler)` 只匹配以 `/api` 开头的请求。
+2. 在 `App` 中实现 `app.all(path, handler)`，让它匹配所有 HTTP 方法。
+3. 尝试实现子路由挂载：`app.use('/podcasts', podcastRouter)`，其中 `podcastRouter` 本身也是一个 `App` 实例。
+4. 测试错误处理中间件：在 handler 里 `throw new Error('boom')`，验证 4 参数错误处理中间件能否正确返回 500。

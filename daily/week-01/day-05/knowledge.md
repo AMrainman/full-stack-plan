@@ -1,79 +1,77 @@
 ---
 week: 1
 day: 5
-date: 2026-06-24
+date: 2026-07-08
 stage: 后端基础与数据库
 theme: TypeScript + Node.js 热身
 hours: 2
-tags: [TypeScript, Node.js, HTTP, JSON, 持久化]
+tags: [TypeScript, Node.js, http, middleware, router, Express]
 file: knowledge.md
 ---
 
 # 今日核心知识点
 
-## 1. 请求体解析
+## 1. `app.use` 与 `app.get` 的注册顺序和执行顺序
 
-Node.js 的 `req` 是一个可读流。客户端发送的 POST 请求体可能分多次到达，因此需要监听 `data` 和 `end` 事件：
+Express 中所有中间件和路由都按注册顺序放入同一个队列。请求到达时，从队列头部开始依次执行，遇到 `next()` 就继续下一个。
 
 ```typescript
-let body = '';
-req.on('data', chunk => body += chunk);
-req.on('end', () => {
-  const data = JSON.parse(body);
-  // 处理 data
+app.use(m1);
+app.get('/a', h1);
+app.use(m2);
+app.get('/b', h2);
+```
+
+请求 `GET /b` 的执行顺序是：m1 → 尝试匹配 `/a`（不匹配，跳过）→ m2 → h2。也就是说，**注册顺序决定执行顺序**，而路由是否命中只影响「是否执行对应的 handler」。
+
+为什么重要：这是理解 Express 中间件链的核心。很多 bug 源于「以为路由会先匹配再执行中间件」。
+
+常见误区：
+- 以为 `app.get` 注册的路由会优先于后面 `app.use` 的中间件执行。
+- 在 `app.use(bodyParser)` 之前注册路由，导致路由里拿不到 `req.body`。
+
+## 2. 路由是带条件的中间件
+
+从执行器角度看，`app.get('/podcasts/:id', handler)` 等价于：
+
+```typescript
+app.use((req, res, next) => {
+  if (req.method === 'GET' && req.url matches '/podcasts/:id') {
+    handler(req, res, next);
+  } else {
+    next();
+  }
 });
 ```
 
-为什么重要：不理解流式读取，会在大请求体或慢网络场景下丢失数据。
+路由 handler 和普通中间件的区别只是「多了一层匹配条件」。
+
+为什么重要：理解这一点后，就不会把「中间件」和「路由」当成两个完全不同的东西。
 
 常见误区：
-- 直接在 `createServer` 回调里同步读取 `req.body`，结果永远是 `undefined`。
-- 不处理 `JSON.parse` 异常，导致整个进程崩溃。
+- 认为路由 handler 不能调用 `next()`。
+- 认为中间件不能返回响应。
 
-## 2. URL 查询参数
+## 3. `next()` 的两种用法
 
-使用 `URL` 全局对象解析带查询参数的 URL：
+- `next()`：正常进入下一个中间件/路由。
+- `next(err)`：跳过普通中间件，直接进入第一个错误处理中间件。
 
-```typescript
-const url = new URL(req.url, 'http://localhost');
-const category = url.searchParams.get('category');
-```
+错误处理中间件的签名是 `(err, req, res, next)`，Express 通过函数形参个数（`fn.length === 4`）来识别。
 
-为什么重要：RESTful 接口中，查询参数是实现过滤、分页、排序的主要手段。
+为什么重要：统一的错误处理是生产服务必备的兜底能力。没有它，一个未捕获异常就可能导致连接挂起或进程崩溃。
 
 常见误区：
-- 手动用字符串 split 解析 `?category=tech&page=2`，容易遗漏 URL 编码问题。
-- 不区分 `category` 不存在和 `category` 为空字符串的情况。
+- 在错误处理中间件里继续调用 `next(err)` 但不处理，导致错误被吞掉。
+- 把错误处理中间件放在普通中间件之前注册，导致它永远捕获不到错误。
 
-## 3. JSON 文件持久化
+## 4. `app.use('/api', handler)` 的「路径前缀匹配」
 
-开发环境中可用 `fs.readFileSync` / `writeFileSync` 读写 JSON 文件：
+Express 的 `app.use` 支持路径前缀。`app.use('/api', handler)` 会匹配所有以 `/api` 开头的请求。这在真实项目中常用于挂载子路由或统一前缀校验。
 
-```typescript
-import fs from 'fs';
+今天的手写 `App` 可以先实现不带路径前缀的 `app.use(handler)`，把路径前缀匹配作为扩展练习。
 
-const data = JSON.parse(fs.readFileSync('podcasts.json', 'utf-8'));
-fs.writeFileSync('podcasts.json', JSON.stringify(data, null, 2));
-```
-
-为什么重要：持久化是把「内存服务」变成「有状态服务」的第一步，后续会替换为数据库。
+为什么重要：路径前缀匹配是模块化路由（如 `app.use('/users', userRouter)`）的基础。
 
 常见误区：
-- 高并发下同步写文件会阻塞事件循环，生产环境应使用数据库或异步写入。
-- 写入前不处理异常，导致文件损坏或数据丢失。
-
-## 4. 错误处理
-
-在 HTTP 服务中，要为以下情况返回合适状态码：
-
-- 200：成功
-- 201：创建成功
-- 400：请求格式错误（如 JSON 解析失败）
-- 404：路由不存在
-- 500：服务器内部错误
-
-为什么重要：统一错误响应是 API 可维护性的基础，也是前后端联调时快速定位问题的关键。
-
-常见误区：
-- 所有错误都返回 500，让客户端无法区分「请求错了」和「服务器崩了」。
-- 不捕获异常，导致一个请求出错就拖垮整个服务。
+- 把 `app.use('/api', handler)` 理解为精确匹配 `/api`，而不是前缀匹配。

@@ -1,13 +1,15 @@
 {
   "name": "day-05-demo",
   "version": "1.0.0",
+  "description": "Week 1 Day 5：手写类 Express 的 App 对象",
   "type": "module",
   "scripts": {
-    "dev": "npx tsx podcast-server.ts",
-    "start": "npx tsx podcast-server.ts"
+    "dev": "tsx minimal-http-server.ts",
+    "start": "tsx minimal-http-server.ts"
   },
   "devDependencies": {
-    "tsx": "^4.7.0",
-    "typescript": "^5.3.3"
+    "@types/node": "^20.14.0",
+    "tsx": "^4.15.0",
+    "typescript": "^5.4.0"
   }
 }
