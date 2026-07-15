@@ -1,7 +1,7 @@
 ---
 week: 1
 day: 6
-date: 2026-06-24
+date: 2026-07-15
 stage: 后端基础与数据库
 theme: TypeScript + Node.js 热身
 hours: 2
@@ -9,57 +9,54 @@ tags: [TypeScript, Node.js, HTTP, 测试, 文档]
 file: demo.md
 ---
 
-# 今日代码目标
+# 今日 Demo 说明
 
-## demo 文件结构
+## 目标
+
+把本周手写 HTTP 服务的最终成果整理成一个可独立运行、可一键测试的 demo 工程。
+
+## 文件结构
 
 ```text
 demo/
-├── README.md              # 运行说明
+├── README.md              # 运行说明与接口清单
 ├── package.json           # 依赖与脚本
 ├── tsconfig.json          # TypeScript 配置
-├── promise-chain.ts       # day-01：Promise 链与错误处理
-├── event-loop-order.js    # day-02：Event Loop 执行顺序
-├── minimal-http-server.ts # day-04：最小 HTTP 服务
-├── podcast-server.ts      # day-05：带持久化的播客 CRUD
-├── podcasts.json          # 持久化数据
-└── test.sh                # 自动测试脚本
+├── app.ts                 # 类 Express 的 App 对象
+├── router.ts              # 路由类型定义
+├── minimal-http-server.ts # 播客 CRUD 服务入口
+└── test.sh                # 一键测试脚本
 ```
 
 ## 运行步骤
 
-1. 进入 demo 目录：
-   ```bash
-   cd daily/week-01/day-06/demo
-   ```
+```bash
+cd daily/week-01/day-06/demo
+pnpm install
+pnpm dev        # 启动服务
+```
 
-2. 安装依赖：
-   ```bash
-   pnpm install
-   ```
+服务启动后访问：
 
-3. 运行单个 demo：
-   ```bash
-   npx tsx promise-chain.ts
-   npx tsx minimal-http-server.ts
-   npx tsx podcast-server.ts
-   ```
+```bash
+curl http://localhost:3000/health
+curl http://localhost:3000/podcasts
+curl "http://localhost:3000/podcasts?category=tech"
+curl http://localhost:3000/podcasts/1
+```
 
-4. 运行自动测试：
-   ```bash
-   bash test.sh
-   ```
+## 一键测试
 
-## 预期输出
+```bash
+./test.sh
+```
 
-- `test.sh` 会启动 `podcast-server.ts`，依次测试：
-  - `GET /health` → 200
-  - `GET /api/podcasts` → 200 + 数组
-  - `GET /api/podcasts?category=tech` → 200 + 过滤后数组
-  - `POST /api/podcasts` → 201 + 新对象
-  - `GET /unknown` → 404
-- 测试结束后自动关闭服务。
+预期输出：
+- 启动服务
+- 依次调用健康检查、列表、过滤、详情、创建、更新、删除、404、500 接口
+- 每个请求打印状态码和响应体
+- 最后关闭服务并输出「所有测试通过」
 
-## 今日结束后项目状态
+## 今日结束后 demo 状态
 
-本周所有 demo 文件整理为可复现工程，`test.sh` 可自动验证关键接口。
+`demo/` 目录是一个结构完整的可复现工程，任何人克隆仓库后都能按 README 跑通本周「最小 HTTP 服务」的全部能力。
