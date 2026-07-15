@@ -25,5 +25,8 @@
   "bugs": {
     "url": "https://github.com/AMrainman/full-stack-plan/issues"
   },
-  "homepage": "https://github.com/AMrainman/full-stack-plan#readme"
+  "homepage": "https://github.com/AMrainman/full-stack-plan#readme",
+  "dependencies": {
+    "tsx": "^4.23.1"
+  }
 }

@@ -103,7 +103,7 @@ docker compose up -d
 
 仓库目前只有文档，尚未形成代码架构。后续预期结构可能为：
 
-```
+```text
 .
 ├── frontend/          # Vue3 + Vite 前端
 ├── backend/           # NestJS + Prisma 后端
@@ -117,6 +117,10 @@ docker compose up -d
 - Prisma schema 和数据库迁移命令。
 - 环境变量模板与配置说明。
 - 测试命令和测试数据库隔离方案。
+
+## 注意事项
+
+- 生成的学习计划要用最新的技术知识，比如 express 的讲解就用最新版本的 express 来做demo和讲解。
 
 ## 文档维护约定
 
