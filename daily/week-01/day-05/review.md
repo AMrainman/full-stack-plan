@@ -81,9 +81,8 @@ file: review.md
 
 ### 今日最大收获
 
-有收获
+了解了 express 的整体架构，这个 app.ts 是个很不错的 express 学习资源。
 
 ### 后续疑问
 
-无疑问
-
+无
